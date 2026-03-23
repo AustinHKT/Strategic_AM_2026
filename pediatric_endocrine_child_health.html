@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Journey · Pediatric Endocrine</title>
+<style>
+:root{
+  --navy:#12388b;
+  --navy-dark:#0b2560;
+  --navy-soft:#eaf0fb;
+  --red:#c3192d;
+  --red-soft:#fff1f3;
+  --gray:#8b9aac;
+  --gray-2:#eef2f7;
+  --text:#182433;
+  --text-soft:#5c6b7d;
+  --white:#ffffff;
+  --success:#0f9d74;
+  --warning:#e07a00;
+  --shadow-sm:0 8px 24px rgba(18,56,139,.08);
+  --shadow-md:0 18px 40px rgba(18,56,139,.10);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,#f7f9fc 0%,#eef2f7 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}
+.container{max-width:1440px;margin:0 auto;padding:0 28px 44px}
+.header{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 58%,#204ea8 100%);color:#fff}
+.header::before,.header::after{content:"";position:absolute;border-radius:50%;filter:blur(4px);opacity:.22}
+.header::before{width:360px;height:360px;right:-110px;top:-120px;background:radial-gradient(circle,var(--red) 0%, transparent 70%)}
+.header::after{width:300px;height:300px;left:-90px;bottom:-130px;background:radial-gradient(circle,#9fb4e9 0%, transparent 70%)}
+.header-inner{position:relative;z-index:2;max-width:1440px;margin:0 auto;padding:28px;display:flex;gap:22px;align-items:center}
+.logo-shell{width:92px;height:92px;background:#fff;border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px rgba(0,0,0,.16);flex-shrink:0;position:relative;overflow:hidden}
+.logo-shell::before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(18,56,139,.08),rgba(18,56,139,.02));}
+.logo-mark{position:relative;z-index:2;width:64px;height:64px;border-radius:18px;background:linear-gradient(180deg,#f2f6ff 0%,#e7efff 100%);border:2px solid rgba(18,56,139,.12);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:28px;font-weight:900;letter-spacing:-.05em}
+.header-copy h1{margin:0;font-size:clamp(26px,3vw,42px);line-height:1.05;font-weight:800;letter-spacing:-.03em}
+.header-copy .sub{margin-top:8px;color:rgba(255,255,255,.78);font-size:15px}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.12);backdrop-filter:blur(8px)}
+.badge.red{background:rgba(195,25,45,.22);border-color:rgba(255,138,153,.28)}
+.top-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;margin-top:-20px;position:relative;z-index:3}
+.card{background:rgba(255,255,255,.96);border:1px solid rgba(18,56,139,.08);box-shadow:var(--shadow-sm);border-radius:var(--radius);backdrop-filter:blur(10px)}
+.control-card,.metric-panel,.flow-wrap{padding:22px}
+.control-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.title{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+.subtitle{font-size:12px;color:var(--text-soft);margin-top:4px;line-height:1.55}
+.mode-toggle{display:inline-flex;background:var(--gray-2);padding:5px;border-radius:14px;border:1px solid rgba(18,56,139,.08)}
+.mode-toggle button{border:0;background:transparent;color:var(--text-soft);font-weight:800;padding:10px 18px;border-radius:10px;cursor:pointer;transition:.25s}
+.mode-toggle button.active{background:var(--navy);color:#fff;box-shadow:0 8px 18px rgba(18,56,139,.18)}
+.control-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.75fr);gap:14px;margin-top:18px}
+.field{background:var(--gray-2);border-radius:16px;padding:14px;border:1px solid rgba(18,56,139,.06)}
+.field input{width:100%;border:0;outline:0;background:#fff;border-radius:12px;padding:12px 14px;font-size:24px;font-weight:800;color:var(--navy-dark);box-shadow:inset 0 0 0 2px rgba(18,56,139,.08)}
+.label{font-size:11px;color:var(--text-soft);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.field small{display:block;margin-top:8px;font-size:12px;color:var(--text-soft);font-weight:700}
+.kpi-inline{display:flex;flex-direction:column;justify-content:center;height:100%;background:linear-gradient(180deg,#fff 0%,#f7faff 100%);border-radius:16px;padding:14px 16px;border:1px solid rgba(18,56,139,.08)}
+.kpi-inline .k{font-size:11px;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.kpi-inline .v{font-size:34px;font-weight:900;color:var(--navy-dark);margin-top:8px;letter-spacing:-.03em}
+.kpi-inline .hint{font-size:12px;color:var(--text-soft);margin-top:6px;line-height:1.5}
+.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+button.primary{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;transition:.2s;background:var(--navy);color:#fff}
+button.primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.micro-note{margin-top:14px;font-size:13px;color:var(--text-soft);line-height:1.6}
+.metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.metric{padding:16px 16px 14px;border-radius:16px;background:linear-gradient(180deg,#fff 0%,#f7faff 100%);border:1px solid rgba(18,56,139,.08)}
+.metric .k{font-size:11px;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.metric .v{font-size:29px;font-weight:900;color:var(--navy-dark);margin-top:8px;letter-spacing:-.03em}
+.metric .v.red{color:var(--red)}
+.metric .hint{font-size:12px;color:var(--text-soft);margin-top:6px;line-height:1.5}
+.section{margin-top:22px}
+.section-title{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.section-title .line{width:5px;height:24px;border-radius:999px;background:var(--red)}
+.section-title h2{margin:0;color:var(--navy);font-size:20px;font-weight:900;letter-spacing:-.02em}
+.flow-wrap{overflow:hidden}
+.flow-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(72px,.42fr) minmax(0,1.15fr) minmax(72px,.42fr) minmax(0,1.25fr) minmax(72px,.42fr) minmax(0,1.25fr) minmax(72px,.42fr) minmax(0,1.1fr);gap:12px;align-items:stretch}
+.step-card{height:100%;padding:16px 12px;border-radius:20px;background:#fff;border:1px solid rgba(18,56,139,.08);box-shadow:var(--shadow-sm);text-align:center;position:relative;overflow:hidden}
+.step-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:rgba(18,56,139,.3)}
+.step.target .step-card{background:linear-gradient(180deg,var(--red-soft) 0%, #fff 38%);border-color:rgba(195,25,45,.18)}
+.step.target .step-card::before{background:var(--red)}
+.step-icon{font-size:28px}
+.step-index{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--navy-soft);color:var(--navy);font-weight:900;font-size:13px;margin:10px auto 12px}
+.step.target .step-index{background:var(--red);color:#fff}
+.step-title-text{font-size:12px;font-weight:800;color:var(--navy);line-height:1.35;min-height:44px;display:flex;justify-content:center;align-items:center}
+.step-value{font-size:clamp(22px,2vw,32px);font-weight:900;color:var(--navy-dark);margin-top:10px;letter-spacing:-.03em}
+.step.target .step-value{color:var(--red)}
+.step-sub{margin-top:4px;color:var(--text-soft);font-size:12px;font-weight:600}
+.step-mini{margin-top:10px;background:var(--gray-2);border-radius:999px;padding:6px 10px;font-size:10px;color:var(--text-soft);font-weight:800;display:inline-block}
+.arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+.arrow-badge{border-radius:16px;padding:8px;background:linear-gradient(180deg,#fff 0%,#edf3ff 100%);border:1px solid rgba(18,56,139,.10);text-align:center;width:100%}
+.arrow-badge .rate{font-size:18px;font-weight:900;color:var(--navy)}
+.arrow-badge .stage{font-size:9px;color:var(--text-soft);font-weight:800;line-height:1.3;margin-top:2px}
+.arrow-line{position:relative;width:100%;height:18px}
+.arrow-line::before{content:"";position:absolute;left:8px;right:18px;top:7px;height:4px;border-radius:999px;background:linear-gradient(90deg,rgba(18,56,139,.25),rgba(18,56,139,.7),rgba(195,25,45,.55))}
+.arrow-line::after{content:"";position:absolute;right:8px;top:3px;width:10px;height:10px;border-top:3px solid var(--navy);border-right:3px solid var(--navy);transform:rotate(45deg)}
+.flow-mode-note{margin-top:16px;padding:14px 16px;border-radius:16px;background:#f8fbff;border:1px solid rgba(18,56,139,.08);font-size:13px;color:var(--text-soft);line-height:1.6}
+.footer-note{margin-top:18px;text-align:center;color:var(--text-soft);font-size:12px}
+.backward .arrow-line::before{background:linear-gradient(90deg,rgba(195,25,45,.55),rgba(18,56,139,.7),rgba(18,56,139,.25))}
+.backward .flow-mode-note strong{color:var(--red)}
+@media (max-width:1120px){
+  .top-grid{grid-template-columns:1fr}
+}
+@media (max-width:980px){
+  .flow-grid{grid-template-columns:1fr}
+  .arrow{padding:4px 0 10px}
+  .arrow-line{height:26px;width:34px}
+  .arrow-line::before{left:15px;right:auto;top:2px;bottom:12px;width:4px;height:auto;background:linear-gradient(180deg,rgba(18,56,139,.25),rgba(18,56,139,.7),rgba(195,25,45,.55))}
+  .backward .arrow-line::before{background:linear-gradient(180deg,rgba(195,25,45,.55),rgba(18,56,139,.7),rgba(18,56,139,.25))}
+  .arrow-line::after{right:11px;top:auto;bottom:5px;transform:rotate(135deg)}
+  .control-row,.metric-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-shell"><div class="logo-mark">CH</div></div>
+    <div class="header-copy">
+      <h1>Patient Journey · Pediatric Endocrine</h1>
+      <div class="sub">ระบบ SBU Child Health · Bangkok Hospital Siriroj · Interactive planning view</div>
+      <div class="badge-row">
+        <div class="badge">🏥 Bangkok Hospital Siriroj</div>
+        <div class="badge">🧒 Pediatric Endocrine</div>
+        <div class="badge red">👶 SBU Child Health</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container" id="appRoot">
+  <div class="top-grid">
+    <section class="card control-card">
+      <div class="control-head">
+        <div>
+          <div class="title">Scenario Controls</div>
+          <div class="subtitle">ปรับ Target Output เพื่อคำนวณ Patient Journey Flow ของ Pediatric Endocrine ตาม workbook โดยใช้ pure funnel conversion</div>
+        </div>
+        <div class="mode-toggle" aria-label="Calculation mode">
+          <button id="modeForward" class="active" type="button">Forward</button>
+          <button id="modeBackward" type="button">Backward</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="field">
+          <div class="label">Target Output</div>
+          <input id="targetInput" type="number" min="0" step="1" value="400">
+          <small>Endocrine Disease (HN)</small>
+        </div>
+        <div class="kpi-inline">
+          <div class="k">Pure Funnel Conversion</div>
+          <div class="v" id="inlinePure">28.8%</div>
+          <div class="hint">Risk Factors → Endocrine Disease</div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="primary" id="calculateBtn" type="button">⟳ Calculate</button>
+      </div>
+
+      <div class="micro-note" id="scenarioText">
+        ระบบจะคำนวณย้อนจาก <strong>Target Output</strong> เพื่อหา upstream requirement ของแต่ละ stage และแสดงผลให้สอดคล้องกับโครงสร้างใน workbook
+      </div>
+    </section>
+
+    <aside class="card metric-panel">
+      <div class="title">Quick Summary</div>
+      <div class="subtitle">สรุป requirement หลักจากค่า target ปัจจุบัน</div>
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="k">Required Risk Factors</div>
+          <div class="v red" id="metricRisk">1,389</div>
+          <div class="hint">จำนวนกลุ่มเสี่ยงที่ต้องมีเพื่อไปถึง target</div>
+        </div>
+        <div class="metric">
+          <div class="k">Required Doctor Diagnosis</div>
+          <div class="v" id="metricDoctor">1,389</div>
+          <div class="hint">เคส Doctor Diagnosis ที่ต้องมี</div>
+        </div>
+        <div class="metric">
+          <div class="k">Required Short Stature / Precocious Puberty</div>
+          <div class="v" id="metricShort">556</div>
+          <div class="hint">เคสที่เข้าสู่การพิจารณา endocrine</div>
+        </div>
+        <div class="metric">
+          <div class="k">Required X-Ray / Lab</div>
+          <div class="v" id="metricXray">444</div>
+          <div class="hint">Bone age X-Ray หรือ hormone lab ที่ต้องมี</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="section">
+    <div class="section-title">
+      <div class="line"></div>
+      <h2>Patient Journey Flow</h2>
+    </div>
+    <div class="card flow-wrap">
+      <div class="flow-grid">
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">⚠️</div>
+            <div class="step-index">1</div>
+            <div class="step-title-text">กลุ่มเสี่ยงตาม Risk Factors</div>
+            <div class="step-value" id="stepRisk">1,389</div>
+            <div class="step-sub">upstream pool</div>
+            <div class="step-mini">child health intake</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate1">100.0%</div>
+            <div class="stage">to Doctor Diagnosis</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">👩‍⚕️</div>
+            <div class="step-index">2</div>
+            <div class="step-title-text">Doctor Diagnosis</div>
+            <div class="step-value" id="stepDoctor">1,389</div>
+            <div class="step-sub">diagnosed cases</div>
+            <div class="step-mini">clinical review</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate2">40.0%</div>
+            <div class="stage">to Short stature / precocious puberty</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">📏</div>
+            <div class="step-index">3</div>
+            <div class="step-title-text">Short stature / precocious puberty</div>
+            <div class="step-value" id="stepShort">556</div>
+            <div class="step-sub">screened endocrine cases</div>
+            <div class="step-mini">key endocrine indication</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate3">80.0%</div>
+            <div class="stage">to X-Ray / Lab</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">🧪</div>
+            <div class="step-index">4</div>
+            <div class="step-title-text">X-Ray (bone age) / Lab (hormone)</div>
+            <div class="step-value" id="stepXray">444</div>
+            <div class="step-sub">diagnostic workup</div>
+            <div class="step-mini">bone age / hormone testing</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate4">90.0%</div>
+            <div class="stage">to Endocrine Disease</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step target">
+          <div class="step-card">
+            <div class="step-icon">🎯</div>
+            <div class="step-index">5</div>
+            <div class="step-title-text">Endocrine Disease (HN)</div>
+            <div class="step-value" id="stepTarget">400</div>
+            <div class="step-sub">target output</div>
+            <div class="step-mini">interactive target</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-mode-note" id="flowModeNote">
+        <strong>Forward</strong> จะคำนวณจาก upstream requirement ที่ได้จาก target แล้วไล่ลงมาตาม conversion rates เดิม เพื่อให้ผลลัพธ์ปลายทางกลับมาที่ target เดิมพอดี
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">Built from the uploaded Pediatric Endocrine workbook for interactive patient journey review.</div>
+</div>
+
+<script>
+const workbook = {
+  defaultTarget: 400,
+  stages: [
+    'กลุ่มเสี่ยงตาม Risk Factors',
+    'Doctor Diagnosis',
+    'Short stature / precocious puberty',
+    'X-Ray (bone age) / Lab (hormone)',
+    'Endocrine Disease (HN)'
+  ],
+  rates: [1, 0.4, 0.8, 0.9]
+};
+
+let currentMode = 'forward';
+
+const el = {
+  targetInput: document.getElementById('targetInput'),
+  calculateBtn: document.getElementById('calculateBtn'),
+  modeForward: document.getElementById('modeForward'),
+  modeBackward: document.getElementById('modeBackward'),
+  appRoot: document.getElementById('appRoot'),
+  inlinePure: document.getElementById('inlinePure'),
+  metricRisk: document.getElementById('metricRisk'),
+  metricDoctor: document.getElementById('metricDoctor'),
+  metricShort: document.getElementById('metricShort'),
+  metricXray: document.getElementById('metricXray'),
+  stepRisk: document.getElementById('stepRisk'),
+  stepDoctor: document.getElementById('stepDoctor'),
+  stepShort: document.getElementById('stepShort'),
+  stepXray: document.getElementById('stepXray'),
+  stepTarget: document.getElementById('stepTarget'),
+  rate1: document.getElementById('rate1'),
+  rate2: document.getElementById('rate2'),
+  rate3: document.getElementById('rate3'),
+  rate4: document.getElementById('rate4'),
+  flowModeNote: document.getElementById('flowModeNote'),
+  scenarioText: document.getElementById('scenarioText')
+};
+
+function fmtNumber(value){
+  const safe = Number.isFinite(value) ? Math.round(value) : 0;
+  return new Intl.NumberFormat('en-US', {maximumFractionDigits:0}).format(safe);
+}
+
+function fmtPct(value){
+  const safe = Number.isFinite(value) ? value : 0;
+  return `${(safe * 100).toFixed(1)}%`;
+}
+
+function getTarget(){
+  const raw = Number(el.targetInput.value);
+  return Number.isFinite(raw) && raw >= 0 ? raw : 0;
+}
+
+function deriveFromTarget(target){
+  const [r1, r2, r3, r4] = workbook.rates;
+  const endocrine = target;
+  const xray = r4 > 0 ? endocrine / r4 : 0;
+  const shortStature = r3 > 0 ? xray / r3 : 0;
+  const doctor = r2 > 0 ? shortStature / r2 : 0;
+  const risk = r1 > 0 ? doctor / r1 : 0;
+  return { risk, doctor, shortStature, xray, endocrine };
+}
+
+function forwardCheck(risk){
+  const [r1, r2, r3, r4] = workbook.rates;
+  const doctor = risk * r1;
+  const shortStature = doctor * r2;
+  const xray = shortStature * r3;
+  const endocrine = xray * r4;
+  return { risk, doctor, shortStature, xray, endocrine };
+}
+
+function render(){
+  const target = getTarget();
+  const pure = workbook.rates.reduce((acc, rate) => acc * rate, 1);
+  const required = deriveFromTarget(target);
+  const flow = forwardCheck(required.risk);
+
+  el.inlinePure.textContent = fmtPct(pure);
+  el.rate1.textContent = fmtPct(workbook.rates[0]);
+  el.rate2.textContent = fmtPct(workbook.rates[1]);
+  el.rate3.textContent = fmtPct(workbook.rates[2]);
+  el.rate4.textContent = fmtPct(workbook.rates[3]);
+
+  el.metricRisk.textContent = fmtNumber(required.risk);
+  el.metricDoctor.textContent = fmtNumber(required.doctor);
+  el.metricShort.textContent = fmtNumber(required.shortStature);
+  el.metricXray.textContent = fmtNumber(required.xray);
+
+  el.stepRisk.textContent = fmtNumber(flow.risk);
+  el.stepDoctor.textContent = fmtNumber(flow.doctor);
+  el.stepShort.textContent = fmtNumber(flow.shortStature);
+  el.stepXray.textContent = fmtNumber(flow.xray);
+  el.stepTarget.textContent = fmtNumber(flow.endocrine);
+
+  if(currentMode === 'forward'){
+    el.appRoot.classList.remove('backward');
+    el.flowModeNote.innerHTML = '<strong>Forward</strong> จะคำนวณจาก upstream requirement ที่ได้จาก target แล้วไล่ลงมาตาม conversion rates เดิม เพื่อให้ผลลัพธ์ปลายทางกลับมาที่ target เดิมพอดี';
+    el.scenarioText.innerHTML = 'ระบบจะคำนวณย้อนจาก <strong>Target Output</strong> เพื่อหา upstream requirement ของแต่ละ stage แล้วแสดง flow แบบเดินหน้าไปยัง Endocrine Disease';
+  } else {
+    el.appRoot.classList.add('backward');
+    el.flowModeNote.innerHTML = '<strong>Backward</strong> จะอ่าน logic จาก Endocrine Disease ย้อนกลับไปยัง upstream requirement ของแต่ละ stage ตาม conversion rates เดิมใน workbook';
+    el.scenarioText.innerHTML = 'ระบบจะยึด <strong>Target Output</strong> เป็นปลายทาง แล้วคำนวณย้อนกลับเพื่อหา requirement ของ Risk Factors, Doctor Diagnosis, Short stature / precocious puberty และ X-Ray / Lab';
+  }
+}
+
+function setMode(mode){
+  currentMode = mode;
+  el.modeForward.classList.toggle('active', mode === 'forward');
+  el.modeBackward.classList.toggle('active', mode === 'backward');
+  render();
+}
+
+el.calculateBtn.addEventListener('click', render);
+el.targetInput.addEventListener('input', render);
+el.modeForward.addEventListener('click', () => setMode('forward'));
+el.modeBackward.addEventListener('click', () => setMode('backward'));
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Journey · Gyn Surgery (MIS)</title>
+<style>
+:root{
+  --plum:#7f256c;
+  --plum-dark:#4d1742;
+  --plum-soft:#f6edf6;
+  --rose:#d94b86;
+  --rose-soft:#fff1f7;
+  --gold:#c8923b;
+  --lav:#f7f4fb;
+  --gray:#95a0b3;
+  --gray-2:#eef1f7;
+  --text:#1f2431;
+  --text-soft:#667085;
+  --white:#ffffff;
+  --success:#0f9d74;
+  --warning:#d97706;
+  --shadow-sm:0 10px 30px rgba(79,23,66,.10);
+  --shadow-md:0 18px 44px rgba(79,23,66,.14);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,#faf8fc 0%,#f2f4f9 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}
+.container{max-width:1440px;margin:0 auto;padding:0 28px 44px}
+.header{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--plum-dark) 0%,var(--plum) 60%,var(--rose) 100%);
+  color:#fff;
+}
+.header::before,.header::after{
+  content:"";position:absolute;border-radius:50%;opacity:.22;filter:blur(4px)
+}
+.header::before{width:360px;height:360px;right:-120px;top:-120px;background:radial-gradient(circle,#ffb3cf 0%, transparent 70%)}
+.header::after{width:300px;height:300px;left:-80px;bottom:-120px;background:radial-gradient(circle,#d7c5ff 0%, transparent 70%)}
+.header-inner{position:relative;z-index:2;max-width:1440px;margin:0 auto;padding:28px;display:flex;gap:22px;align-items:center}
+.logo-shell{
+  width:94px;height:94px;border-radius:24px;background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px rgba(0,0,0,.18);flex-shrink:0
+}
+.logo-mark{
+  width:72px;height:72px;border-radius:22px;
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.84));
+  color:var(--plum);display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:900;letter-spacing:-.05em;
+}
+.header-copy h1{margin:0;font-size:clamp(28px,3vw,44px);line-height:1.04;font-weight:900;letter-spacing:-.03em}
+.header-copy .sub{margin-top:8px;color:rgba(255,255,255,.82);font-size:15px}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+  font-size:12px;font-weight:800;letter-spacing:.02em;border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px)
+}
+.badge.rose{background:rgba(255,255,255,.16);border-color:rgba(255,209,227,.38)}
+.top-grid{display:grid;grid-template-columns:1.25fr .95fr;gap:18px;margin-top:-20px;position:relative;z-index:3}
+.card{background:rgba(255,255,255,.97);border:1px solid rgba(79,23,66,.08);box-shadow:var(--shadow-sm);border-radius:var(--radius);backdrop-filter:blur(10px)}
+.control-card,.metric-panel,.flow-wrap,.panel,.rate-panel{padding:22px}
+.control-head,.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.title{font-size:18px;font-weight:900;color:var(--plum);letter-spacing:-.02em}
+.subtitle{font-size:12px;color:var(--text-soft);margin-top:4px}
+.control-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.field,.small-field,.rate-item{background:var(--gray-2);border-radius:16px;padding:14px;border:1px solid rgba(79,23,66,.06)}
+.label{font-size:11px;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.input-wrap{display:flex;align-items:center;gap:10px}
+.input-wrap input{width:100%;border:0;outline:0;background:#fff;border-radius:12px;padding:12px 14px;font-size:24px;font-weight:900;color:var(--plum-dark);box-shadow:inset 0 0 0 2px rgba(79,23,66,.08)}
+.input-wrap small{font-size:12px;color:var(--text-soft);font-weight:800;white-space:nowrap}
+.mode-toggle{display:inline-flex;background:var(--gray-2);padding:5px;border-radius:14px;border:1px solid rgba(79,23,66,.08)}
+.mode-toggle button{border:0;background:transparent;color:var(--text-soft);font-weight:900;padding:10px 18px;border-radius:10px;cursor:pointer;transition:.25s}
+.mode-toggle button.active{background:var(--plum);color:#fff;box-shadow:0 8px 18px rgba(79,23,66,.18)}
+.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+button.primary,button.ghost{border:0;border-radius:12px;padding:12px 18px;font-weight:900;cursor:pointer;transition:.2s}
+button.primary{background:var(--plum);color:#fff}
+button.primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+button.ghost{background:#fff;color:var(--plum);box-shadow:inset 0 0 0 2px rgba(79,23,66,.12)}
+button.ghost:hover{background:var(--plum-soft)}
+.metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.metric{padding:16px 16px 14px;border-radius:16px;background:linear-gradient(180deg,#fff 0%,#fbf7fc 100%);border:1px solid rgba(79,23,66,.08)}
+.metric .k{font-size:11px;color:var(--text-soft);font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.metric .v{font-size:29px;font-weight:900;color:var(--plum-dark);margin-top:8px;letter-spacing:-.03em}
+.metric .v.rose{color:var(--rose)}
+.metric .v.good{color:var(--success)}
+.metric .v.warn{color:var(--warning)}
+.metric .hint{font-size:12px;color:var(--text-soft);margin-top:6px;line-height:1.5}
+.section{margin-top:22px}
+.section-title{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.section-title .line{width:5px;height:24px;border-radius:999px;background:var(--rose)}
+.section-title h2{margin:0;color:var(--plum);font-size:20px;font-weight:900;letter-spacing:-.02em}
+.flow-wrap{overflow:hidden}
+.flow-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(60px,.4fr) minmax(0,1.1fr) minmax(60px,.4fr)
+                        minmax(0,1.1fr) minmax(60px,.4fr) minmax(0,1.1fr) minmax(60px,.4fr)
+                        minmax(0,1.1fr) minmax(60px,.4fr) minmax(0,1.1fr);
+  gap:12px;align-items:stretch
+}
+.step-card{
+  height:100%;padding:16px 12px;border-radius:20px;background:#fff;border:1px solid rgba(79,23,66,.08);
+  box-shadow:var(--shadow-sm);text-align:center;position:relative;overflow:hidden
+}
+.step-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:rgba(127,37,108,.32)}
+.step.current .step-card::before{background:linear-gradient(90deg,#b36ac7,#7f256c)}
+.step.target .step-card{background:linear-gradient(180deg,var(--rose-soft) 0%, #fff 42%);border-color:rgba(217,75,134,.20)}
+.step.target .step-card::before{background:var(--rose)}
+.step-icon{font-size:28px}
+.step-index{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--plum-soft);color:var(--plum);font-weight:900;font-size:13px;margin:10px auto 12px}
+.step.target .step-index{background:var(--rose);color:#fff}
+.step-title-text{font-size:12px;font-weight:800;color:var(--plum);line-height:1.35;min-height:42px;display:flex;align-items:center;justify-content:center}
+.step-value{font-size:clamp(22px,2vw,32px);font-weight:900;color:var(--plum-dark);margin-top:10px;letter-spacing:-.03em}
+.step.target .step-value{color:var(--rose)}
+.step-sub{margin-top:4px;color:var(--text-soft);font-size:12px;font-weight:700}
+.step-mini{margin-top:10px;background:var(--gray-2);border-radius:999px;padding:6px 10px;font-size:10px;color:var(--text-soft);font-weight:800;display:inline-block}
+.arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+.arrow-badge{border-radius:16px;padding:8px;background:linear-gradient(180deg,#fff 0%,#f8eff7 100%);border:1px solid rgba(79,23,66,.10);text-align:center;width:100%}
+.arrow-badge .rate{font-size:18px;font-weight:900;color:var(--plum)}
+.arrow-badge .stage{font-size:9px;color:var(--text-soft);font-weight:800;line-height:1.3;margin-top:2px}
+.arrow-line{position:relative;width:100%;height:18px}
+.arrow-line::before{content:"";position:absolute;left:8px;right:18px;top:7px;height:4px;border-radius:999px;background:linear-gradient(90deg,rgba(127,37,108,.22),rgba(127,37,108,.72),rgba(217,75,134,.55))}
+.arrow-line::after{content:"";position:absolute;right:8px;top:3px;width:10px;height:10px;border-top:3px solid var(--plum);border-right:3px solid var(--plum);transform:rotate(45deg)}
+.flow-grid.backward .arrow-line::before{left:18px;right:8px}
+.flow-grid.backward .arrow-line::after{left:8px;right:auto;border-top:0;border-right:0;border-left:3px solid var(--plum);border-bottom:3px solid var(--plum);transform:rotate(45deg)}
+.flow-caption{margin-top:14px;padding:14px 16px;border-radius:16px;background:#fbf7fc;border-left:4px solid var(--plum);font-size:13px;color:var(--text-soft);line-height:1.6}
+.flow-caption strong{color:var(--plum)}
+.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.panel h3,.rate-panel h3{margin:0;color:var(--plum);font-size:16px;font-weight:900;letter-spacing:-.02em}
+.panel .panel-sub,.rate-panel .panel-sub{margin-top:4px;color:var(--text-soft);font-size:12px}
+.small-field input,.rate-item input{
+  width:100%;margin-top:8px;padding:11px 12px;border:0;border-radius:12px;background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(79,23,66,.08);font-size:18px;font-weight:900;color:var(--plum-dark);outline:0
+}
+.small-field .tiny,.rate-item .tiny{font-size:12px;color:var(--text-soft);font-weight:700;line-height:1.35}
+.input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.contrib-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.contrib-item{padding:14px;border-radius:16px;background:linear-gradient(180deg,#fff 0%,#fcf7fb 100%);border:1px solid rgba(79,23,66,.08)}
+.contrib-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.contrib-name{font-weight:900;color:var(--text)}
+.contrib-route{margin-top:4px;font-size:11px;color:var(--text-soft);font-weight:700}
+.contrib-chip{padding:6px 10px;border-radius:999px;background:var(--plum-soft);color:var(--plum);font-size:11px;font-weight:900}
+.contrib-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.contrib-metric{padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(79,23,66,.08)}
+.contrib-k{font-size:10px;color:var(--text-soft);font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.contrib-v{margin-top:6px;font-size:20px;font-weight:900;color:var(--plum-dark);letter-spacing:-.02em}
+.rates-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.rate-item .suffix{margin-left:8px;font-size:12px;color:var(--text-soft);font-weight:800}
+.note{margin-top:12px;font-size:12px;color:var(--text-soft);line-height:1.55}
+.footer-note{margin-top:18px;text-align:center;color:var(--text-soft);font-size:12px}
+@media (max-width:1180px){
+  .top-grid,.dual-grid{grid-template-columns:1fr}
+  .rates-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:1024px){
+  .flow-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .arrow{display:none}
+}
+@media (max-width:720px){
+  .container{padding:0 16px 28px}
+  .header-inner{padding:20px 16px;align-items:flex-start}
+  .logo-shell{width:82px;height:82px}
+  .logo-mark{width:62px;height:62px;font-size:26px}
+  .control-row,.metric-grid,.input-grid,.contrib-list,.rates-grid{grid-template-columns:1fr}
+  .flow-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-shell">
+      <div class="logo-mark">WH</div>
+    </div>
+    <div class="header-copy">
+      <h1>Patient Journey · Gyn Surgery (MIS)</h1>
+      <div class="sub">ระบบ SBU Women's health · Interactive planning view</div>
+      <div class="badge-row">
+        <div class="badge">🌸 Women's Health</div>
+        <div class="badge">🏥 Gyn Surgery (MIS)</div>
+        <div class="badge rose">📊 Interactive planning</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="top-grid">
+    <section class="card control-card">
+      <div class="control-head">
+        <div>
+          <div class="title">Scenario Controls</div>
+          <div class="subtitle">ตั้งค่า Target MIS และสลับมุมมองการคำนวณระหว่าง forward / backward</div>
+        </div>
+        <div class="mode-toggle" aria-label="Calculation mode">
+          <button id="modeForward" class="active" type="button">Forward</button>
+          <button id="modeBackward" type="button">Backward</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="field">
+          <div class="label">Target Output</div>
+          <div class="input-wrap">
+            <input id="targetInput" type="number" min="0" step="1" value="134">
+            <small>MIS (HN)</small>
+          </div>
+        </div>
+        <div class="field">
+          <div class="label">Pure Funnel Conversion</div>
+          <div id="baseConversionDisplay" style="font-size:28px;font-weight:900;color:var(--rose);margin-top:4px">0.6%</div>
+          <div class="subtitle" style="margin-top:10px">Risk Factors → MIS</div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="primary" id="calculateBtn" type="button">⟳ Calculate</button>
+      </div>
+      <div class="note" id="calcStatus" style="margin-top:14px">Patient Journey Flow จะคำนวณจาก Target MIS เป็นหลักทั้งใน Forward และ Backward ส่วน Driver Inputs ใช้สำหรับคำนวณ Projection แยกต่างหาก</div>
+    </section>
+
+    <aside class="card metric-panel">
+      <div class="title">Planning Snapshot</div>
+      <div class="subtitle">ภาพรวมผลลัพธ์จาก workbook defaults และ target ปัจจุบัน</div>
+      <div class="metric-grid" style="margin-top:16px">
+        <div class="metric">
+          <div class="k">Projected MIS</div>
+          <div class="v rose" id="projectedMisMetric">134</div>
+          <div class="hint">คำนวณจาก risk pool และ conversion rates ปัจจุบัน</div>
+        </div>
+        <div class="metric">
+          <div class="k">Gap vs Target</div>
+          <div class="v" id="gapMetric">0</div>
+          <div class="hint" id="gapHint">ตรงกับ target</div>
+        </div>
+        <div class="metric">
+          <div class="k">Required Risk Factors</div>
+          <div class="v" id="requiredRiskMetric">24,233</div>
+          <div class="hint">จำนวน upstream cases ที่ต้องมีเพื่อให้ได้ target MIS</div>
+        </div>
+        <div class="metric">
+          <div class="k">Projected GYN Surgery</div>
+          <div class="v" id="projectedSurgeryMetric">582</div>
+          <div class="hint">ผลลัพธ์ก่อนเข้าสู่ MIS share</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="section">
+    <div class="section-title">
+      <div class="line"></div>
+      <h2>Patient Journey Flow</h2>
+    </div>
+    <div class="card flow-wrap">
+      <div class="flow-grid" id="flowGrid">
+        <div class="step current">
+          <div class="step-card">
+            <div class="step-icon">⚠️</div>
+            <div class="step-index">1</div>
+            <div class="step-title-text">Risk Factors</div>
+            <div class="step-value" id="stageRisk">24,233</div>
+            <div class="step-sub">upstream pool</div>
+            <div class="step-mini">Workbook base</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate1Badge">48.9%</div>
+            <div class="stage">to OPD GYN</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">👩‍⚕️</div>
+            <div class="step-index">2</div>
+            <div class="step-title-text">OPD GYN Visit</div>
+            <div class="step-value" id="stageOpd">11,850</div>
+            <div class="step-sub">พบสูตินรีแพทย์</div>
+            <div class="step-mini">Primary surgical route</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate2Badge">37.4%</div>
+            <div class="stage">to U/S TVS</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">🩻</div>
+            <div class="step-index">3</div>
+            <div class="step-title-text">U/S TVS</div>
+            <div class="step-value" id="stageUs">4,427</div>
+            <div class="step-sub">screening / imaging</div>
+            <div class="step-mini">Diagnostic step</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate3Badge">40.8%</div>
+            <div class="stage">to Abnormal</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">🔎</div>
+            <div class="step-index">4</div>
+            <div class="step-title-text">Abnormal Findings</div>
+            <div class="step-value" id="stageAbnormal">1,806</div>
+            <div class="step-sub">eligible cases</div>
+            <div class="step-mini">Findings to surgery consideration</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate4Badge">32.2%</div>
+            <div class="stage">to GYN Surgery</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-card">
+            <div class="step-icon">🏥</div>
+            <div class="step-index">5</div>
+            <div class="step-title-text">GYN Surgery</div>
+            <div class="step-value" id="stageSurgery">582</div>
+            <div class="step-sub">operative cases</div>
+            <div class="step-mini">Before MIS selection</div>
+          </div>
+        </div>
+
+        <div class="arrow">
+          <div class="arrow-badge">
+            <div class="rate" id="rate5Badge">23.0%</div>
+            <div class="stage">to MIS</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+
+        <div class="step target">
+          <div class="step-card">
+            <div class="step-icon">✨</div>
+            <div class="step-index">6</div>
+            <div class="step-title-text">MIS</div>
+            <div class="step-value" id="stageMis">134</div>
+            <div class="step-sub">target output</div>
+            <div class="step-mini">Interactive target</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-caption">
+        <strong>Forward</strong> และ <strong>Backward</strong> ใช้ตัวเลขจาก target MIS ชุดเดียวกัน ต่างกันที่ทิศทางการอ่าน flow เท่านั้น ส่วน Projection ด้านขวาจะคำนวณจาก Driver Inputs ตาม workbook
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <div class="line"></div>
+      <h2>Workbook Drivers & Pathway Contribution</h2>
+    </div>
+    <div class="dual-grid">
+      <section class="card panel">
+        <h3>Driver Inputs</h3>
+        <div class="panel-sub">ค่าเริ่มต้นอ้างอิงตาม workbook และสามารถปรับเพื่อทำ scenario ได้</div>
+        <div class="input-grid">
+          <div class="small-field">
+            <div class="label">Risk Factors Pool</div>
+            <div class="tiny">จำนวนกลุ่มเสี่ยงตั้งต้น</div>
+            <input id="riskInput" type="number" min="0" step="1" value="24233">
+          </div>
+          <div class="small-field">
+            <div class="label">MIS Share</div>
+            <div class="tiny">สัดส่วน MIS จาก GYN Surgery (derived from workbook target)</div>
+            <input id="misRateInput" type="number" min="0" max="100" step="0.1" value="23.0">
+          </div>
+        </div>
+        <div class="note">
+          เส้นทางขนานใน workbook เริ่มจาก Risk Factors เดียวกัน แล้วแยกเป็น <strong>Primary surgical route</strong> และ <strong>Checkup / follow-up route</strong> เพื่อดูผลลัพธ์คนละแบบ
+        </div>
+      </section>
+
+      <section class="card panel">
+        <h3>Pathway Contribution</h3>
+        <div class="panel-sub">ผลลัพธ์จาก workbook formulas ของทั้งสองเส้นทาง</div>
+        <div class="contrib-list">
+          <div class="contrib-item">
+            <div class="contrib-top">
+              <div>
+                <div class="contrib-name">Primary Surgical Route</div>
+                <div class="contrib-route">Risk → OPD GYN → U/S TVS → Abnormal → GYN Surgery → MIS</div>
+              </div>
+              <div class="contrib-chip">MIS planning</div>
+            </div>
+            <div class="contrib-metrics">
+              <div class="contrib-metric">
+                <div class="contrib-k">GYN Surgery</div>
+                <div class="contrib-v" id="contribSurgery">582</div>
+              </div>
+              <div class="contrib-metric">
+                <div class="contrib-k">MIS Output</div>
+                <div class="contrib-v" id="contribMis">134</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="contrib-item">
+            <div class="contrib-top">
+              <div>
+                <div class="contrib-name">Checkup / Follow-up Route</div>
+                <div class="contrib-route">Risk → Checkup Customer → Checkup Visit → Abnormal → GYN Consult / Med + F/U</div>
+              </div>
+              <div class="contrib-chip">support route</div>
+            </div>
+            <div class="contrib-metrics">
+              <div class="contrib-metric">
+                <div class="contrib-k">GYN Consult</div>
+                <div class="contrib-v" id="contribConsult">1,163</div>
+              </div>
+              <div class="contrib-metric">
+                <div class="contrib-k">Med + F/U</div>
+                <div class="contrib-v" id="contribMed">984</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <div class="line"></div>
+      <h2>Conversion Rates</h2>
+    </div>
+    <div class="dual-grid">
+      <section class="card rate-panel">
+        <h3>Primary Surgical Route</h3>
+        <div class="panel-sub">ค่าสำหรับ flow หลักที่นำไปสู่ MIS</div>
+        <div class="rates-grid">
+          <div class="rate-item">
+            <div class="label">Risk → OPD GYN</div>
+            <div class="tiny">Workbook cell G12</div>
+            <input id="rateOpdInput" type="number" min="0" max="100" step="0.1" value="48.9">
+          </div>
+          <div class="rate-item">
+            <div class="label">OPD GYN → U/S TVS</div>
+            <div class="tiny">Workbook cell I11</div>
+            <input id="rateUsInput" type="number" min="0" max="100" step="0.1" value="37.4">
+          </div>
+          <div class="rate-item">
+            <div class="label">U/S TVS → Abnormal</div>
+            <div class="tiny">Workbook cell K11</div>
+            <input id="rateAbnormalInput" type="number" min="0" max="100" step="0.1" value="40.8">
+          </div>
+          <div class="rate-item">
+            <div class="label">Abnormal → GYN Surgery</div>
+            <div class="tiny">Workbook cell Q11</div>
+            <input id="rateSurgeryInput" type="number" min="0" max="100" step="0.1" value="32.2">
+          </div>
+          <div class="rate-item">
+            <div class="label">GYN Surgery → MIS</div>
+            <div class="tiny">Derived from workbook target 134 / projected GYN Surgery</div>
+            <input id="rateMisInput" type="number" min="0" max="100" step="0.1" value="23.0">
+          </div>
+        </div>
+      </section>
+
+      <section class="card rate-panel">
+        <h3>Checkup / Follow-up Route</h3>
+        <div class="panel-sub">เส้นทางคู่ขนานตาม workbook formulas</div>
+        <div class="rates-grid">
+          <div class="rate-item">
+            <div class="label">Risk → Checkup Customer</div>
+            <div class="tiny">Workbook cell G13</div>
+            <input id="rateCheckupEntryInput" type="number" min="0" max="100" step="0.1" value="13.1">
+          </div>
+          <div class="rate-item">
+            <div class="label">Checkup Customer → Checkup Visit</div>
+            <div class="tiny">Workbook cell I13</div>
+            <input id="rateCheckupVisitInput" type="number" min="0" max="100" step="0.1" value="100.0">
+          </div>
+          <div class="rate-item">
+            <div class="label">Checkup Visit → Abnormal</div>
+            <div class="tiny">Workbook cell K13</div>
+            <input id="rateCheckupAbnInput" type="number" min="0" max="100" step="0.1" value="45.8">
+          </div>
+          <div class="rate-item">
+            <div class="label">Abnormal → GYN Consult</div>
+            <div class="tiny">Workbook cell M13</div>
+            <input id="rateConsultInput" type="number" min="0" max="100" step="0.1" value="80.0">
+          </div>
+          <div class="rate-item">
+            <div class="label">Abnormal → Med + F/U</div>
+            <div class="tiny">Workbook cell Q13</div>
+            <input id="rateMedInput" type="number" min="0" max="100" step="0.1" value="67.8">
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <div class="footer-note">Built from the uploaded workbook for scenario planning and interactive patient journey review.</div>
+</div>
+
+<script>
+const WORKBOOK_DEFAULTS = {
+  target: 134,
+  risk: 24233,
+  rateOpd: 48.9,
+  rateUs: 37.36,
+  rateAbnormal: 40.8,
+  rateSurgery: 32.24,
+  rateMis: 23.01053377729209,
+  rateCheckupEntry: 13.1,
+  rateCheckupVisit: 100,
+  rateCheckupAbn: 45.8,
+  rateConsult: 80,
+  rateMed: 67.75
+};
+
+let mode = 'forward';
+let lastEditedMisSource = 'rateMisInput';
+
+const el = id => document.getElementById(id);
+const fmt = value => Math.round(Number(value) || 0).toLocaleString('en-US');
+const fmtStage = value => value == null ? '0' : fmt(value);
+const pct = value => `${Number(value || 0).toFixed(1)}%`;
+const pct1 = value => Number(value || 0).toFixed(1);
+
+const INTEGER_INPUT_IDS = ['targetInput', 'riskInput'];
+const DECIMAL_INPUT_IDS = [
+  'rateOpdInput','rateUsInput','rateAbnormalInput','rateSurgeryInput',
+  'rateMisInput','misRateInput','rateCheckupEntryInput','rateCheckupVisitInput',
+  'rateCheckupAbnInput','rateConsultInput','rateMedInput'
+];
+const ALL_INPUT_IDS = [...INTEGER_INPUT_IDS, ...DECIMAL_INPUT_IDS];
+
+function clampRate(v){
+  const n = Number(v);
+  if (!isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, n));
+}
+
+function parseNumberValue(value){
+  const raw = String(value ?? '').replace(/,/g, '').trim();
+  if (raw === '') return 0;
+  const n = Number(raw);
+  return isFinite(n) ? Math.max(0, n) : 0;
+}
+
+function parseNonNegative(id){
+  return parseNumberValue(el(id).value);
+}
+
+function setFieldValue(id, value){
+  const input = el(id);
+  const nextValue = Number(value) || 0;
+  input.value = INTEGER_INPUT_IDS.includes(id) ? String(Math.round(nextValue)) : pct1(nextValue);
+}
+
+function syncMisRateFields(sourceId){
+  const source = el(sourceId);
+  const targetId = sourceId === 'misRateInput' ? 'rateMisInput' : 'misRateInput';
+  const target = el(targetId);
+  const cleaned = pct1(clampRate(parseNumberValue(source.value)));
+  source.value = cleaned;
+  target.value = cleaned;
+  lastEditedMisSource = sourceId;
+}
+
+function resolveMisRatePercent(){
+  const plannerValue = clampRate(parseNumberValue(el('misRateInput').value));
+  const detailValue = clampRate(parseNumberValue(el('rateMisInput').value));
+
+  if (Math.abs(plannerValue - detailValue) < 0.0001) {
+    const cleaned = pct1(plannerValue);
+    el('misRateInput').value = cleaned;
+    el('rateMisInput').value = cleaned;
+    return plannerValue;
+  }
+
+  const resolved = lastEditedMisSource === 'misRateInput' ? plannerValue : detailValue;
+  const cleaned = pct1(resolved);
+  el('misRateInput').value = cleaned;
+  el('rateMisInput').value = cleaned;
+  return resolved;
+}
+
+function divideOrNull(value, rate){
+  if (value == null) return null;
+  if (!isFinite(rate) || rate <= 0) return null;
+  return value / rate;
+}
+
+function multiplyOrZero(value, rate){
+  if (!isFinite(value) || !isFinite(rate) || value <= 0 || rate <= 0) return 0;
+  return value * rate;
+}
+
+function getInputs(){
+  const rateMisPercent = resolveMisRatePercent();
+  return {
+    target: parseNonNegative('targetInput'),
+    risk: parseNonNegative('riskInput'),
+    rateOpd: clampRate(parseNumberValue(el('rateOpdInput').value)) / 100,
+    rateUs: clampRate(parseNumberValue(el('rateUsInput').value)) / 100,
+    rateAbnormal: clampRate(parseNumberValue(el('rateAbnormalInput').value)) / 100,
+    rateSurgery: clampRate(parseNumberValue(el('rateSurgeryInput').value)) / 100,
+    rateMis: rateMisPercent / 100,
+    rateCheckupEntry: clampRate(parseNumberValue(el('rateCheckupEntryInput').value)) / 100,
+    rateCheckupVisit: clampRate(parseNumberValue(el('rateCheckupVisitInput').value)) / 100,
+    rateCheckupAbn: clampRate(parseNumberValue(el('rateCheckupAbnInput').value)) / 100,
+    rateConsult: clampRate(parseNumberValue(el('rateConsultInput').value)) / 100,
+    rateMed: clampRate(parseNumberValue(el('rateMedInput').value)) / 100
+  };
+}
+
+function compute(inputs){
+  const projected = {};
+  projected.opd = multiplyOrZero(inputs.risk, inputs.rateOpd);
+  projected.us = multiplyOrZero(projected.opd, inputs.rateUs);
+  projected.abnormal = multiplyOrZero(projected.us, inputs.rateAbnormal);
+  projected.surgery = multiplyOrZero(projected.abnormal, inputs.rateSurgery);
+  projected.mis = multiplyOrZero(projected.surgery, inputs.rateMis);
+
+  projected.checkupEntry = multiplyOrZero(inputs.risk, inputs.rateCheckupEntry);
+  projected.checkupVisit = multiplyOrZero(projected.checkupEntry, inputs.rateCheckupVisit);
+  projected.checkupAbnormal = multiplyOrZero(projected.checkupVisit, inputs.rateCheckupAbn);
+  projected.checkupConsult = multiplyOrZero(projected.checkupAbnormal, inputs.rateConsult);
+  projected.checkupMed = multiplyOrZero(projected.checkupAbnormal, inputs.rateMed);
+
+  const req = {};
+  req.mis = inputs.target;
+  req.surgery = divideOrNull(req.mis, inputs.rateMis);
+  req.abnormal = divideOrNull(req.surgery, inputs.rateSurgery);
+  req.us = divideOrNull(req.abnormal, inputs.rateAbnormal);
+  req.opd = divideOrNull(req.us, inputs.rateUs);
+  req.risk = divideOrNull(req.opd, inputs.rateOpd);
+
+  const missingPrimary = [];
+  if (inputs.target > 0 && inputs.rateMis <= 0) missingPrimary.push('GYN Surgery → MIS');
+  if (inputs.target > 0 && inputs.rateSurgery <= 0) missingPrimary.push('Abnormal → GYN Surgery');
+  if (inputs.target > 0 && inputs.rateAbnormal <= 0) missingPrimary.push('U/S TVS → Abnormal');
+  if (inputs.target > 0 && inputs.rateUs <= 0) missingPrimary.push('OPD GYN → U/S TVS');
+  if (inputs.target > 0 && inputs.rateOpd <= 0) missingPrimary.push('Risk Factors → OPD GYN');
+
+  return { projected, req, missingPrimary };
+}
+
+function updateStatus(inputs, missingPrimary){
+  const status = el('calcStatus');
+  if (!status) return;
+
+  if (ALL_INPUT_IDS.every(id => parseNumberValue(el(id).value) === 0)) {
+    status.textContent = 'ล้างค่าช่องตัวเลขทั้งหมดเป็น 0 แล้ว ระบบพร้อมให้กรอกค่าใหม่และกด Calculate';
+    return;
+  }
+
+  if (inputs.target > 0 && missingPrimary.length) {
+    status.textContent = `ระบบรับค่า Target MIS แล้ว แต่ยังคำนวณ upstream requirement ได้ไม่ครบ เพราะ conversion rate ต่อไปนี้ยังเป็น 0: ${missingPrimary.join(' · ')}`;
+    return;
+  }
+
+  if (inputs.target > 0) {
+    status.textContent = 'ระบบคำนวณ Patient Journey จาก Target MIS และอัปเดต Projection จาก Driver Inputs เรียบร้อยแล้ว';
+    return;
+  }
+
+  status.textContent = 'ระบบคำนวณล่าสุดเรียบร้อยแล้ว';
+}
+
+function normalizeAllInputs(){
+  ALL_INPUT_IDS.forEach(id => {
+    if (id === 'misRateInput' || id === 'rateMisInput') return;
+    const value = parseNumberValue(el(id).value);
+    setFieldValue(id, value);
+  });
+  syncMisRateFields(lastEditedMisSource === 'misRateInput' ? 'misRateInput' : 'rateMisInput');
+}
+
+function calculateNow(){
+  normalizeAllInputs();
+  render();
+}
+
+function render(){
+  const inputs = getInputs();
+  const { projected, req, missingPrimary } = compute(inputs);
+
+  const flow = {
+    risk: req.risk,
+    opd: req.opd,
+    us: req.us,
+    abnormal: req.abnormal,
+    surgery: req.surgery,
+    mis: req.mis
+  };
+
+  el('stageRisk').textContent = fmtStage(flow.risk);
+  el('stageOpd').textContent = fmtStage(flow.opd);
+  el('stageUs').textContent = fmtStage(flow.us);
+  el('stageAbnormal').textContent = fmtStage(flow.abnormal);
+  el('stageSurgery').textContent = fmtStage(flow.surgery);
+  el('stageMis').textContent = fmtStage(inputs.target);
+
+  el('projectedMisMetric').textContent = fmt(projected.mis);
+  el('projectedSurgeryMetric').textContent = fmt(projected.surgery);
+  el('requiredRiskMetric').textContent = fmtStage(req.risk);
+
+  const gap = projected.mis - inputs.target;
+  el('gapMetric').textContent = `${gap >= 0 ? '+' : '-'}${fmt(Math.abs(gap))}`;
+  el('gapMetric').className = `v ${gap > 0 ? 'good' : gap < 0 ? 'warn' : ''}`;
+  el('gapHint').textContent =
+    gap > 0 ? 'Projected MIS สูงกว่า target' :
+    gap < 0 ? 'Projected MIS ต่ำกว่า target' :
+    'Projected MIS ตรงกับ target';
+
+  el('baseConversionDisplay').textContent = pct(inputs.rateOpd * inputs.rateUs * inputs.rateAbnormal * inputs.rateSurgery * inputs.rateMis * 100);
+  el('rate1Badge').textContent = pct(inputs.rateOpd * 100);
+  el('rate2Badge').textContent = pct(inputs.rateUs * 100);
+  el('rate3Badge').textContent = pct(inputs.rateAbnormal * 100);
+  el('rate4Badge').textContent = pct(inputs.rateSurgery * 100);
+  el('rate5Badge').textContent = pct(inputs.rateMis * 100);
+
+  el('contribSurgery').textContent = fmt(projected.surgery);
+  el('contribMis').textContent = fmt(projected.mis);
+  el('contribConsult').textContent = fmt(projected.checkupConsult);
+  el('contribMed').textContent = fmt(projected.checkupMed);
+
+  el('misRateInput').value = pct1(inputs.rateMis * 100);
+  el('rateMisInput').value = pct1(inputs.rateMis * 100);
+  el('flowGrid').classList.toggle('backward', mode === 'backward');
+  updateStatus(inputs, missingPrimary);
+}
+
+function setMode(nextMode){
+  mode = nextMode;
+  el('modeForward').classList.toggle('active', mode === 'forward');
+  el('modeBackward').classList.toggle('active', mode === 'backward');
+  render();
+}
+
+
+function handleNumericInput(id){
+  if (id === 'misRateInput' || id === 'rateMisInput') {
+    syncMisRateFields(id);
+  }
+  render();
+}
+
+el('calculateBtn').addEventListener('click', calculateNow);
+el('modeForward').addEventListener('click', () => setMode('forward'));
+el('modeBackward').addEventListener('click', () => setMode('backward'));
+
+ALL_INPUT_IDS.forEach(id => {
+  el(id).addEventListener('input', () => handleNumericInput(id));
+  el(id).addEventListener('change', () => handleNumericInput(id));
+  el(id).addEventListener('blur', () => handleNumericInput(id));
+});
+
+render();
+</script>
+</body>
+</html>

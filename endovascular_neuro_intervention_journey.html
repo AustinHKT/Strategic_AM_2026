@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Journey · Endovascular Neuro Intervention</title>
+<style>
+:root{
+  --navy:#0d2a63;
+  --navy-2:#173f8a;
+  --purple:#6d3fb3;
+  --teal:#20b4c7;
+  --soft:#eef3fb;
+  --soft-2:#f8faff;
+  --line:rgba(13,42,99,.10);
+  --text:#15253f;
+  --text-soft:#63728a;
+  --white:#ffffff;
+  --accent:#ff4d8d;
+  --yellow:#fff0a8;
+  --yellow-text:#8c5b00;
+  --pink:#ffd6e5;
+  --pink-text:#b1265f;
+  --shadow-sm:0 12px 28px rgba(13,42,99,.08);
+  --shadow-md:0 18px 48px rgba(13,42,99,.14);
+  --radius:22px;
+  --radius-sm:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,#f6f8fd 0%,#eef2f9 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}
+.container{max-width:1480px;margin:0 auto;padding:0 26px 42px}
+.header{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 48%,var(--purple) 100%);color:#fff}
+.header::before,.header::after{content:"";position:absolute;border-radius:999px;filter:blur(10px);opacity:.26}
+.header::before{width:320px;height:320px;right:-80px;top:-120px;background:radial-gradient(circle,var(--teal) 0%,transparent 72%)}
+.header::after{width:260px;height:260px;left:-70px;bottom:-110px;background:radial-gradient(circle,#8ab5ff 0%,transparent 72%)}
+.header-inner{position:relative;z-index:2;max-width:1480px;margin:0 auto;padding:28px 26px 30px;display:flex;gap:20px;align-items:center}
+.logo-shell{width:92px;height:92px;border-radius:24px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px rgba(0,0,0,.16);flex-shrink:0}
+.logo-shell svg{width:68px;height:68px}
+.header-copy h1{margin:0;font-size:clamp(28px,3vw,42px);line-height:1.04;font-weight:900;letter-spacing:-.03em}
+.header-copy .sub{margin-top:8px;color:rgba(255,255,255,.82);font-size:15px}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:800;letter-spacing:.02em}
+.badge.accent{background:rgba(255,77,141,.18);border-color:rgba(255,165,198,.26)}
+
+.top-grid{display:grid;grid-template-columns:1.18fr .82fr;gap:18px;margin-top:-18px;position:relative;z-index:3}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px)}
+.control-card,.snapshot-card,.flow-card,.detail-card{padding:22px}
+.control-head,.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.title{font-size:18px;font-weight:900;color:var(--navy);letter-spacing:-.02em}
+.subtitle{margin-top:4px;font-size:12px;color:var(--text-soft)}
+.mode-toggle{display:inline-flex;background:var(--soft);padding:5px;border-radius:14px;border:1px solid var(--line)}
+.mode-toggle button{border:0;background:transparent;color:var(--text-soft);padding:10px 18px;border-radius:10px;font-weight:900;cursor:pointer;transition:.25s}
+.mode-toggle button.active{background:linear-gradient(135deg,var(--purple) 0%,#8546c2 100%);color:#fff;box-shadow:0 10px 20px rgba(109,63,179,.22)}
+.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.field{background:var(--soft);padding:14px;border-radius:18px;border:1px solid var(--line)}
+.label{font-size:11px;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.input-wrap{display:flex;align-items:center;gap:10px}
+.input-wrap input{width:100%;border:0;outline:0;background:#fff;border-radius:12px;padding:12px 14px;font-size:26px;font-weight:900;color:var(--navy);box-shadow:inset 0 0 0 2px rgba(13,42,99,.08)}
+.input-wrap small{font-size:12px;color:var(--text-soft);font-weight:800;white-space:nowrap}
+.big-value{font-size:34px;font-weight:900;letter-spacing:-.03em;color:var(--navy)}
+.big-value.teal{color:var(--teal)}
+.helper{font-size:12px;color:var(--text-soft);line-height:1.55;margin-top:6px}
+.action-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+button.primary{border:0;background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-weight:900;cursor:pointer;box-shadow:0 12px 24px rgba(13,42,99,.18);transition:.2s}
+button.primary:hover{transform:translateY(-1px)}
+.pill-note{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--text-soft);font-weight:800}
+.snapshot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.metric{padding:16px;border-radius:18px;background:linear-gradient(180deg,#fff 0%,var(--soft-2) 100%);border:1px solid var(--line)}
+.metric .k{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft)}
+.metric .v{margin-top:8px;font-size:30px;font-weight:900;letter-spacing:-.03em;color:var(--navy)}
+.metric .hint{margin-top:6px;font-size:12px;color:var(--text-soft);line-height:1.5}
+
+.section{margin-top:22px}
+.section-title{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.section-title .line{width:5px;height:24px;border-radius:999px;background:linear-gradient(180deg,var(--teal),var(--purple))}
+.section-title h2{margin:0;font-size:21px;font-weight:900;color:var(--navy);letter-spacing:-.02em}
+.flow-card{overflow:hidden}
+.flow-main{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(72px,.46fr) minmax(0,1.05fr) minmax(72px,.46fr) minmax(0,1.25fr) minmax(72px,.46fr) minmax(0,1.08fr) minmax(72px,.46fr) minmax(0,1.08fr);gap:12px;align-items:stretch}
+.step-card{height:100%;padding:16px 14px;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-sm);text-align:center;position:relative;overflow:hidden}
+.step-card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,rgba(32,180,199,.75),rgba(109,63,179,.75))}
+.step-card.target{background:linear-gradient(180deg,#fff4fb 0%,#fff 42%);border-color:rgba(255,77,141,.20)}
+.step-card.target::before{background:linear-gradient(90deg,#ff6aa4,#d03a83)}
+.step-icon{font-size:28px;line-height:1}
+.step-index{margin:10px auto 12px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--soft);color:var(--navy);font-weight:900;font-size:13px}
+.step-card.target .step-index{background:var(--accent);color:#fff}
+.step-title-text{font-size:12px;font-weight:900;color:var(--navy);line-height:1.35;min-height:44px;display:flex;align-items:center;justify-content:center}
+.step-value{margin-top:10px;font-size:clamp(24px,2vw,34px);font-weight:900;letter-spacing:-.03em;color:var(--navy)}
+.step-card.target .step-value{color:var(--accent)}
+.step-sub{margin-top:4px;font-size:12px;color:var(--text-soft);font-weight:700}
+.step-mini{display:inline-block;margin-top:10px;padding:6px 10px;border-radius:999px;background:var(--soft);font-size:10px;font-weight:900;color:var(--text-soft)}
+.arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.arrow-badge{width:100%;padding:8px;border-radius:16px;background:linear-gradient(180deg,#fff 0%,#f0f4ff 100%);border:1px solid var(--line);text-align:center}
+.arrow-badge .rate{font-size:18px;font-weight:900;color:var(--navy)}
+.arrow-badge .stage{margin-top:2px;font-size:9px;color:var(--text-soft);font-weight:800;line-height:1.3}
+.arrow-line{position:relative;width:100%;height:18px}
+.arrow-line::before{content:"";position:absolute;left:8px;right:18px;top:7px;height:4px;border-radius:999px;background:linear-gradient(90deg,rgba(32,180,199,.3),rgba(109,63,179,.72))}
+.arrow-line::after{content:"";position:absolute;right:8px;top:3px;width:10px;height:10px;border-top:3px solid var(--navy);border-right:3px solid var(--navy);transform:rotate(45deg)}
+.feeder-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(72px,.46fr) minmax(0,1.05fr) minmax(72px,.46fr) minmax(0,1.25fr) minmax(72px,.46fr) minmax(0,1.08fr) minmax(72px,.46fr) minmax(0,1.08fr);gap:12px;align-items:start;margin-top:6px}
+.feeder-card{grid-column:5 / span 1;padding:16px 14px;border-radius:20px;background:linear-gradient(180deg,#fff7da 0%,#fff 48%);border:1px solid rgba(228,174,21,.20);text-align:center;box-shadow:var(--shadow-sm)}
+.feeder-card .step-icon{font-size:26px}
+.feeder-card .step-title-text{color:var(--yellow-text)}
+.feeder-card .step-value{color:var(--yellow-text)}
+.feeder-card .step-mini{background:#fff2bf;color:var(--yellow-text)}
+.feeder-arrow{grid-column:6 / span 2;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;min-height:164px;padding-top:0;position:relative;overflow:visible}
+.feeder-arrow .arrow-badge{width:112px;margin-left:0;position:absolute;left:0;top:58px;z-index:2}
+.feeder-arrow .arrow-line{width:92px;position:absolute;left:118px;top:42px;transform:rotate(-34deg);transform-origin:left center;z-index:1}
+.note-box{margin-top:16px;padding:14px 16px;border-radius:16px;background:#f6f9ff;border-left:4px solid var(--purple);font-size:13px;color:var(--text-soft);line-height:1.65}
+.note-box strong{color:var(--navy)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.info-chip-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.info-chip{padding:10px 12px;border-radius:14px;background:var(--soft);border:1px solid var(--line);font-size:12px;color:var(--text-soft);font-weight:800}
+.kpi-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.kpi{padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.kpi .k{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft)}
+.kpi .v{margin-top:8px;font-size:24px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
+.footer-note{text-align:center;margin-top:16px;color:#7b8798;font-size:12px}
+.hidden-mobile{display:block}
+@media (max-width:1180px){
+  .top-grid,.detail-grid{grid-template-columns:1fr}
+}
+@media (max-width:980px){
+  .flow-main,.feeder-grid{grid-template-columns:1fr}
+  .arrow,.feeder-arrow{padding:0 22px}
+  .arrow-line,.feeder-arrow .arrow-line{width:100%;transform:none}
+  .feeder-card,.feeder-arrow{grid-column:auto;min-height:auto;padding-top:0}
+  .feeder-arrow .arrow-badge{width:100%;margin-left:0}
+  .hidden-mobile{display:none}
+}
+@media (max-width:720px){
+  .container{padding:0 16px 34px}
+  .header-inner{padding:22px 16px 26px;align-items:flex-start}
+  .logo-shell{width:78px;height:78px;border-radius:20px}
+  .control-grid,.snapshot-grid,.kpi-list{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-shell" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1" x1="16" y1="14" x2="84" y2="86" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#8FDBFF"/>
+              <stop offset="1" stop-color="#FFFFFF"/>
+            </linearGradient>
+          </defs>
+          <path d="M36 22C29 22 23 28 23 35c0 4 2 8 5 10-2 2-3 5-3 8 0 8 7 15 15 15h21c10 0 18-8 18-18 0-7-4-13-10-16 0-1 0-2 0-3 0-9-7-16-16-16-5 0-10 2-13 7-1 0-3 0-4 0Z" stroke="url(#g1)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="33" cy="35" r="4" fill="#fff"/>
+          <circle cx="48" cy="28" r="4" fill="#fff"/>
+          <circle cx="61" cy="39" r="4" fill="#fff"/>
+          <circle cx="40" cy="50" r="4" fill="#fff"/>
+          <circle cx="57" cy="58" r="4" fill="#fff"/>
+          <path d="M37 35L45 30M51 30L59 37M37 39L40 46M44 49L53 56" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="header-copy">
+        <h1>Patient Journey · Endovascular Neuro Intervention</h1>
+        <div class="sub">ระบบ CoE Neurology · Interactive planning view</div>
+        <div class="badge-row">
+          <div class="badge accent">🧠 CoE Neurology</div>
+          <div class="badge">🩺 Endovascular Neuro Intervention</div>
+          <div class="badge">📊 Target-based scenario</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="top-grid">
+      <div class="card control-card">
+        <div class="control-head">
+          <div>
+            <div class="title">Scenario Controls</div>
+            <div class="subtitle">คำนวณจาก target output โดยอิง conversion rates และ channel mix จาก workbook</div>
+          </div>
+          <div class="mode-toggle" role="tablist" aria-label="calculation mode">
+            <button id="forwardBtn" class="active" type="button">Forward</button>
+            <button id="backwardBtn" type="button">Backward</button>
+          </div>
+        </div>
+
+        <div class="control-grid">
+          <div class="field">
+            <div class="label">Target Output</div>
+            <div class="input-wrap">
+              <input id="targetInput" type="number" min="0" step="1" value="69" />
+              <small>Cases</small>
+            </div>
+          </div>
+          <div class="field">
+            <div class="label">Workbook Channel Mix</div>
+            <div class="big-value teal" id="mixValue">56.5% / 43.5%</div>
+            <div class="helper">MRI/MRA pathway : direct underlying-disease channel</div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="primary" id="calcBtn" type="button">⟳ Calculate</button>
+          <div class="pill-note" id="modeNote">Forward mode: แสดง flow จาก upstream requirement ลงสู่ target output</div>
+        </div>
+      </div>
+
+      <div class="card snapshot-card">
+        <div class="title">Planning Snapshot</div>
+        <div class="subtitle">สรุปตัวเลขสำคัญจาก target และ mix ตาม workbook</div>
+        <div class="snapshot-grid">
+          <div class="metric">
+            <div class="k">Target ENI</div>
+            <div class="v" id="metricTarget">69</div>
+            <div class="hint">Elective Endovascular Neuro Intervention target output</div>
+          </div>
+          <div class="metric">
+            <div class="k">Procedure Cases</div>
+            <div class="v" id="metricProcedure">69</div>
+            <div class="hint">Coiling / Stenting / Embolization before ENI</div>
+          </div>
+          <div class="metric">
+            <div class="k">Risk Factor Required</div>
+            <div class="v" id="metricRisk">3,467</div>
+            <div class="hint">จำนวน upstream pool ที่ต้องใช้สำหรับ MRI/MRA pathway</div>
+          </div>
+          <div class="metric">
+            <div class="k">Direct Channel Contribution</div>
+            <div class="v" id="metricDirect">30</div>
+            <div class="hint">เคสจาก underlying-disease channel ที่เข้า procedure โดยตรง</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <div class="line"></div>
+        <h2>Patient Journey Flow</h2>
+      </div>
+      <div class="card flow-card">
+        <div class="flow-main">
+          <div class="step-card">
+            <div class="step-icon">🧬</div>
+            <div class="step-index">1</div>
+            <div class="step-title-text">Risk factor</div>
+            <div class="step-value" id="riskValue">3,467</div>
+            <div class="step-sub">aging group &gt; 65, Hx.+AF+RiskFactor&gt;1, Hx. of dementia</div>
+            <div class="step-mini">Upstream pool</div>
+          </div>
+
+          <div class="arrow">
+            <div class="arrow-badge">
+              <div class="rate" id="rate1">30%</div>
+              <div class="stage">Risk factor → MRI/MRA</div>
+            </div>
+            <div class="arrow-line"></div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-icon">🧲</div>
+            <div class="step-index">2</div>
+            <div class="step-title-text">MRI/MRA</div>
+            <div class="step-value" id="mriValue">1,040</div>
+            <div class="step-sub">screening / imaging step</div>
+            <div class="step-mini">Primary pathway</div>
+          </div>
+
+          <div class="arrow">
+            <div class="arrow-badge">
+              <div class="rate" id="rate2">15%</div>
+              <div class="stage">MRI/MRA → underlying disease</div>
+            </div>
+            <div class="arrow-line"></div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-icon">🧠</div>
+            <div class="step-index">3</div>
+            <div class="step-title-text">Underlying diseases</div>
+            <div class="step-value" id="underlyingValue">276</div>
+            <div class="step-sub">UIA, significant carotid artery stenosis, chronic SDH/AVM, ICAD</div>
+            <div class="step-mini">Combined qualifying pool</div>
+          </div>
+
+          <div class="arrow">
+            <div class="arrow-badge">
+              <div class="rate" id="rate3">25%</div>
+              <div class="stage">Underlying disease → procedure</div>
+            </div>
+            <div class="arrow-line"></div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-icon">🩺</div>
+            <div class="step-index">4</div>
+            <div class="step-title-text">Coiling / Stenting / Embolization</div>
+            <div class="step-value" id="procedureValue">69</div>
+            <div class="step-sub">procedure-ready cases</div>
+            <div class="step-mini">Before ENI output</div>
+          </div>
+
+          <div class="arrow">
+            <div class="arrow-badge">
+              <div class="rate" id="rate4">100%</div>
+              <div class="stage">Procedure → ENI</div>
+            </div>
+            <div class="arrow-line"></div>
+          </div>
+
+          <div class="step-card target">
+            <div class="step-icon">🎯</div>
+            <div class="step-index">5</div>
+            <div class="step-title-text">Elective Endovascular Neuro Intervention</div>
+            <div class="step-value" id="eniValue">69</div>
+            <div class="step-sub">target output</div>
+            <div class="step-mini">Interactive target</div>
+          </div>
+        </div>
+
+        <div class="feeder-grid">
+          <div class="feeder-card">
+            <div class="step-icon">🟨</div>
+            <div class="step-title-text">Direct underlying-disease channel</div>
+            <div class="step-value" id="directUnderlyingValue">120</div>
+            <div class="step-sub">late-stage feeder according to workbook mix</div>
+            <div class="step-mini">Support channel</div>
+          </div>
+          <div class="feeder-arrow hidden-mobile">
+            <div class="arrow-badge">
+              <div class="rate">25%</div>
+              <div class="stage">Direct channel → procedure</div>
+            </div>
+            <div class="arrow-line"></div>
+          </div>
+        </div>
+
+        <div class="note-box" id="flowNote"><strong>Forward</strong> mode ใช้ target เดียวกันในการหา upstream requirement และแสดงทั้ง primary MRI/MRA pathway กับ direct underlying-disease channel ให้สอดคล้องกันในหน้าเดียว</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <div class="line"></div>
+        <h2>Workbook Pattern & Planning Details</h2>
+      </div>
+      <div class="detail-grid">
+        <div class="card detail-card">
+          <div class="title">Workbook Conversion Logic</div>
+          <div class="subtitle">อ้างอิงจากไฟล์: Risk factor → MRI/MRA → Underlying diseases → Coiling/Stenting/Embolization → ENI</div>
+          <div class="info-chip-row">
+            <div class="info-chip">Risk factor → MRI/MRA = 30%</div>
+            <div class="info-chip">MRI/MRA → Underlying diseases = 15%</div>
+            <div class="info-chip">Underlying diseases → Procedure = 25%</div>
+            <div class="info-chip">Procedure → ENI = 100%</div>
+          </div>
+          <div class="kpi-list">
+            <div class="kpi">
+              <div class="k">Primary path share</div>
+              <div class="v" id="mainShareValue">56.5%</div>
+            </div>
+            <div class="kpi">
+              <div class="k">Direct channel share</div>
+              <div class="v" id="directShareValue">43.5%</div>
+            </div>
+            <div class="kpi">
+              <div class="k">Underlying from MRI/MRA path</div>
+              <div class="v" id="underlyingMainValue">156</div>
+            </div>
+            <div class="kpi">
+              <div class="k">Underlying from direct channel</div>
+              <div class="v" id="underlyingDirectValue">120</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="title">Calculation Notes</div>
+          <div class="subtitle">หน้า interactive นี้ทำให้ target ปรับได้ทันที โดยคง logic เดียวกันระหว่าง Forward และ Backward</div>
+          <div class="note-box" style="margin-top:16px">
+            <strong>Primary MRI/MRA pathway</strong><br>
+            Risk factor → MRI/MRA → Underlying diseases → Coiling/Stenting/Embolization → ENI
+          </div>
+          <div class="note-box" style="margin-top:12px;border-left-color:#e0aa18;background:#fffdf3">
+            <strong>Direct channel</strong><br>
+            Underlying diseases → Coiling/Stenting/Embolization → ENI
+          </div>
+          <div class="helper" style="margin-top:14px">ค่าที่แสดงเป็นจำนวนเคสแบบจำนวนเต็ม เพื่อให้อ่านง่ายและใช้วางแผน capacity ได้ทันที</div>
+        </div>
+      </div>
+      <div class="footer-note">Built from the uploaded workbook for scenario planning and interactive patient journey review.</div>
+    </section>
+  </main>
+
+<script>
+const MODEL = {
+  defaultTarget: 69,
+  rates: {
+    riskToMRI: 0.30,
+    mriToUnderlying: 0.15,
+    underlyingToProcedure: 0.25,
+    procedureToENI: 1.00,
+  },
+  mix: {
+    main: 39 / 69,
+    direct: 30 / 69,
+  }
+};
+
+const state = { mode: 'forward' };
+
+const el = {
+  targetInput: document.getElementById('targetInput'),
+  calcBtn: document.getElementById('calcBtn'),
+  forwardBtn: document.getElementById('forwardBtn'),
+  backwardBtn: document.getElementById('backwardBtn'),
+  modeNote: document.getElementById('modeNote'),
+  flowNote: document.getElementById('flowNote'),
+  metricTarget: document.getElementById('metricTarget'),
+  metricProcedure: document.getElementById('metricProcedure'),
+  metricRisk: document.getElementById('metricRisk'),
+  metricDirect: document.getElementById('metricDirect'),
+  riskValue: document.getElementById('riskValue'),
+  mriValue: document.getElementById('mriValue'),
+  underlyingValue: document.getElementById('underlyingValue'),
+  procedureValue: document.getElementById('procedureValue'),
+  eniValue: document.getElementById('eniValue'),
+  directUnderlyingValue: document.getElementById('directUnderlyingValue'),
+  mainShareValue: document.getElementById('mainShareValue'),
+  directShareValue: document.getElementById('directShareValue'),
+  underlyingMainValue: document.getElementById('underlyingMainValue'),
+  underlyingDirectValue: document.getElementById('underlyingDirectValue'),
+  mixValue: document.getElementById('mixValue')
+};
+
+function clampTarget(value){
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.round(n);
+}
+
+function fmtNumber(n){
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(n);
+}
+
+function fmtPct(n){
+  const value = n * 100;
+  return `${Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1)}%`;
+}
+
+function compute(target){
+  const safeTarget = clampTarget(target);
+  const procedureCases = Math.ceil(safeTarget / MODEL.rates.procedureToENI);
+  const primaryOutput = Math.round(procedureCases * MODEL.mix.main);
+  const directOutput = procedureCases - primaryOutput;
+  const underlyingMain = MODEL.rates.underlyingToProcedure > 0 ? Math.ceil(primaryOutput / MODEL.rates.underlyingToProcedure) : 0;
+  const underlyingDirect = MODEL.rates.underlyingToProcedure > 0 ? Math.ceil(directOutput / MODEL.rates.underlyingToProcedure) : 0;
+  const mri = MODEL.rates.mriToUnderlying > 0 ? Math.ceil(underlyingMain / MODEL.rates.mriToUnderlying) : 0;
+  const risk = MODEL.rates.riskToMRI > 0 ? Math.ceil(mri / MODEL.rates.riskToMRI) : 0;
+  return {
+    target: safeTarget,
+    procedureCases,
+    primaryOutput,
+    directOutput,
+    underlyingMain,
+    underlyingDirect,
+    underlyingTotal: underlyingMain + underlyingDirect,
+    mri,
+    risk,
+  };
+}
+
+function render(){
+  const data = compute(el.targetInput.value);
+  el.targetInput.value = data.target;
+
+  el.metricTarget.textContent = fmtNumber(data.target);
+  el.metricProcedure.textContent = fmtNumber(data.procedureCases);
+  el.metricRisk.textContent = fmtNumber(data.risk);
+  el.metricDirect.textContent = fmtNumber(data.directOutput);
+
+  el.riskValue.textContent = fmtNumber(data.risk);
+  el.mriValue.textContent = fmtNumber(data.mri);
+  el.underlyingValue.textContent = fmtNumber(data.underlyingTotal);
+  el.procedureValue.textContent = fmtNumber(data.procedureCases);
+  el.eniValue.textContent = fmtNumber(data.target);
+  el.directUnderlyingValue.textContent = fmtNumber(data.underlyingDirect);
+  el.underlyingMainValue.textContent = fmtNumber(data.underlyingMain);
+  el.underlyingDirectValue.textContent = fmtNumber(data.underlyingDirect);
+  el.mainShareValue.textContent = fmtPct(MODEL.mix.main);
+  el.directShareValue.textContent = fmtPct(MODEL.mix.direct);
+  el.mixValue.textContent = `${fmtPct(MODEL.mix.main)} / ${fmtPct(MODEL.mix.direct)}`;
+
+  if(state.mode === 'forward'){
+    el.modeNote.textContent = 'Forward mode: แสดง flow จาก upstream requirement ลงสู่ target output';
+    el.flowNote.innerHTML = '<strong>Forward</strong> mode ใช้ target เดียวกันในการหา upstream requirement และแสดงทั้ง primary MRI/MRA pathway กับ direct underlying-disease channel ให้สอดคล้องกันในหน้าเดียว';
+  }else{
+    el.modeNote.textContent = 'Backward mode: คำนวณย้อนจาก target output กลับไปยัง required upstream pool';
+    el.flowNote.innerHTML = '<strong>Backward</strong> mode คำนวณย้อนจาก Elective Endovascular Neuro Intervention target กลับไปยัง procedure, underlying diseases, MRI/MRA และ risk factor โดยยังคง channel mix ตาม workbook เดิม';
+  }
+}
+
+function setMode(mode){
+  state.mode = mode;
+  el.forwardBtn.classList.toggle('active', mode === 'forward');
+  el.backwardBtn.classList.toggle('active', mode === 'backward');
+  render();
+}
+
+el.calcBtn.addEventListener('click', render);
+el.targetInput.addEventListener('input', render);
+el.targetInput.addEventListener('change', render);
+el.targetInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') render(); });
+el.forwardBtn.addEventListener('click', () => setMode('forward'));
+el.backwardBtn.addEventListener('click', () => setMode('backward'));
+
+render();
+</script>
+</body>
+</html>

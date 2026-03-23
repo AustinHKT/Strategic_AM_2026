@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Journey · DM Type II</title>
+  <style>
+    :root {
+      --bg1: #f8fbff;
+      --bg2: #eef4fb;
+      --panel: rgba(255,255,255,0.92);
+      --panel-strong: #ffffff;
+      --line: rgba(24, 63, 117, 0.10);
+      --text: #17335b;
+      --muted: #71829a;
+      --accent: #ef8a57;
+      --accent-2: #ffb180;
+      --teal: #37a6c5;
+      --gold: #cf9b20;
+      --pink: #df6d82;
+      --green: #1ea97d;
+      --shadow: 0 20px 44px rgba(33, 67, 116, 0.10);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(239,138,87,0.10), transparent 26%),
+        radial-gradient(circle at top right, rgba(55,166,197,0.14), transparent 28%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+    }
+    body { padding: 22px; }
+    .page {
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #fff, #fff2ea);
+      border: 1px solid rgba(239,138,87,0.28);
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.75), transparent);
+      transform: translateX(-120%);
+      animation: shine 6s linear infinite;
+    }
+    @keyframes shine {
+      to { transform: translateX(120%); }
+    }
+    .logo span {
+      position: relative;
+      z-index: 1;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.02;
+    }
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .pill-row {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 22px rgba(33, 67, 116, 0.06);
+      font-size: 13px;
+      color: var(--text);
+    }
+    .pill strong { color: var(--accent); }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.98));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+    .subtext {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .mode-toggle {
+      display: inline-flex;
+      background: #eef4fb;
+      border: 1px solid var(--line);
+      padding: 5px;
+      border-radius: 16px;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .mode-btn {
+      border: 0;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .mode-btn.active {
+      background: linear-gradient(135deg, #ef8a57, #ffb180);
+      color: white;
+      box-shadow: 0 12px 24px rgba(239,138,87,0.22);
+    }
+    .control-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .control-box {
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .control-label {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .field {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .field:last-child { margin-bottom: 0; }
+    label {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    input[type="number"] {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(24, 63, 117, 0.12);
+      background: #fff;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+    }
+    input[type="number"]:focus {
+      border-color: rgba(239,138,87,0.70);
+      box-shadow: 0 0 0 4px rgba(239,138,87,0.14);
+    }
+    details {
+      border: 1px dashed rgba(24, 63, 117, 0.16);
+      border-radius: 16px;
+      padding: 10px 12px;
+      background: rgba(248,251,255,0.85);
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border: 0;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+      background: linear-gradient(135deg, #ef8a57, #ffb180);
+      box-shadow: 0 12px 24px rgba(239,138,87,0.18);
+    }
+    .btn.secondary {
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+    .note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: linear-gradient(180deg, #fff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      min-height: 118px;
+    }
+    .stat .k {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .stat .v {
+      margin-top: 8px;
+      font-size: clamp(22px, 2vw, 30px);
+      font-weight: 900;
+    }
+    .stat .d {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 6px;
+    }
+
+    .section-title {
+      margin: 20px 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .flow-panel {
+      padding: 18px;
+    }
+    .main-flow {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 88px minmax(0,1fr) 88px minmax(0,1fr) 88px minmax(0,1fr) 88px minmax(0,1fr);
+      gap: 0;
+      align-items: stretch;
+    }
+    .stage {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 16px;
+      min-height: 250px;
+      box-shadow: 0 12px 28px rgba(33, 67, 116, 0.06);
+      display: flex;
+      flex-direction: column;
+    }
+    .stage .n {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef8a57, #ffb180);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .stage h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+    .stage .desc {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      min-height: 56px;
+    }
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 10px 0 12px;
+    }
+    .stage .value {
+      font-size: clamp(18px, 1.45vw, 28px);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 10px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      display: block;
+      width: 100%;
+      letter-spacing: -0.02em;
+    }
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .metric span:first-child { color: var(--muted); }
+    .tag {
+      display: inline-flex;
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f2f6fb;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .linker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 24px;
+      position: relative;
+    }
+    .rate-badge {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 66px;
+      padding: 8px 10px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #f4f9ff);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 22px rgba(33, 67, 116, 0.08);
+      color: var(--text);
+    }
+    .rate-badge strong { font-size: 16px; line-height: 1; }
+    .rate-badge span {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.15;
+      text-align: center;
+      font-weight: 700;
+    }
+    .branch-wrap {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .branch {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(249,252,255,0.98));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 12px 28px rgba(33, 67, 116, 0.06);
+    }
+    .branch-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .branch h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .mini-rate {
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+      background: #fff6f1;
+      border: 1px solid rgba(239,138,87,0.18);
+      white-space: nowrap;
+    }
+    .branch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .mini-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fbff);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .mini-title {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      min-height: 34px;
+    }
+    .mini-value {
+      margin-top: 8px;
+      font-size: clamp(18px, 1.35vw, 24px);
+      font-weight: 900;
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      display: block;
+      width: 100%;
+      letter-spacing: -0.02em;
+    }
+    .formula-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .formula-list {
+      display: grid;
+      gap: 10px;
+    }
+    .formula-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: linear-gradient(180deg, #fff, #f8fbff);
+    }
+    .formula-item .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+    }
+    code {
+      display: block;
+      white-space: normal;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--text);
+      background: rgba(239,138,87,0.07);
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.5;
+    }
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .ok { color: var(--green); }
+    .warn { color: var(--gold); }
+    .pink { color: var(--pink); }
+    .teal { color: var(--teal); }
+
+    @media (max-width: 1280px) {
+      .top-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .main-flow {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .linker {
+        min-height: 44px;
+        transform: rotate(90deg);
+      }
+      .rate-badge {
+        position: static;
+        transform: none;
+      }
+      .formula-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      body { padding: 14px; }
+      .hero { align-items: flex-start; }
+      .logo { width: 64px; height: 64px; border-radius: 18px; }
+      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .field { grid-template-columns: 1fr; }
+      .branch-wrap { grid-template-columns: 1fr; }
+      .branch-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="logo"><span>DM</span></div>
+      <div>
+        <div class="eyebrow">Patient Journey Flow</div>
+        <h1>Patient Journey · DM Type II</h1>
+        <div class="subtitle">ระบบ NCDs_Focus · Interactive planning view</div>
+        <div class="pill-row">
+          <div class="pill"><strong>NCDs_Focus</strong></div>
+          <div class="pill"><strong>DM type II</strong></div>
+          <div class="pill">อ้างอิงสูตรจาก workbook ที่แนบ</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="top-grid">
+      <div class="panel">
+        <h2>Scenario Controls</h2>
+        <p class="subtext">หน้า interactive นี้ยึดสูตรหลักจาก workbook: Target DM Type II → คำนวณ upstream requirement และ branch outcomes ให้สัมพันธ์กันทั้งหมด</p>
+
+        <div class="mode-toggle" role="tablist" aria-label="Calculation mode">
+          <button class="mode-btn active" id="forwardBtn" type="button">Forward</button>
+          <button class="mode-btn" id="backwardBtn" type="button">Backward</button>
+        </div>
+
+        <div class="control-grid">
+          <div class="control-box">
+            <div class="control-label">Target output</div>
+            <div class="field">
+              <label for="targetDm">DM type II (HN)</label>
+              <input id="targetDm" type="number" min="0" step="1" value="7266" />
+            </div>
+          </div>
+
+          <details>
+            <summary>Advanced conversion rates</summary>
+            <div class="control-grid" style="margin-top:12px;">
+              <div class="control-box">
+                <div class="control-label">Core funnel</div>
+                <div class="field"><label for="riskToFbs">Risk Factors → FBS test (%)</label><input id="riskToFbs" type="number" min="0" step="0.01" value="21" /></div>
+                <div class="field"><label for="fbsToRed">FBS test → Red FBS ≥126 (%)</label><input id="fbsToRed" type="number" min="0" step="0.01" value="12" /></div>
+                <div class="field"><label for="redToDm">Red FBS → DM type II (%)</label><input id="redToDm" type="number" min="0" step="0.01" value="83" /></div>
+                <div class="field"><label for="dmToCpg">DM type II → Compliance CPG (%)</label><input id="dmToCpg" type="number" min="0" step="0.01" value="12.23" /></div>
+                <div class="field"><label for="dmRetention">DM type II → DM Retention (%)</label><input id="dmRetention" type="number" min="0" step="0.01" value="71" /></div>
+              </div>
+              <div class="control-box">
+                <div class="control-label">FBS segmentation branches</div>
+                <div class="field"><label for="fbsToYellow">FBS test → Yellow FBS 100-125 (%)</label><input id="fbsToYellow" type="number" min="0" step="0.01" value="29" /></div>
+                <div class="field"><label for="yellowToFu">Yellow FBS → 3m-F/U HbA1C+FBS (%)</label><input id="yellowToFu" type="number" min="0" step="0.01" value="100" /></div>
+                <div class="field"><label for="fbsToGreen">FBS test → Green FBS &lt;100 (%)</label><input id="fbsToGreen" type="number" min="0" step="0.01" value="59" /></div>
+                <div class="field"><label for="greenToFu">Green FBS → 1Y-F/U HbA1C+FBS (%)</label><input id="greenToFu" type="number" min="0" step="0.01" value="100" /></div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="calcBtn" type="button">⟳ Calculate</button>
+          <button class="btn secondary" id="defaultBtn" type="button">Workbook defaults</button>
+        </div>
+        <div class="note" id="modeNote"></div>
+      </div>
+
+      <div>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Required Risk Factors</div>
+            <div class="v" id="statRisk">0</div>
+            <div class="d">Upstream requirement เพื่อให้ได้ DM type II ตาม target ที่กำหนด</div>
+          </div>
+          <div class="stat">
+            <div class="k">FBS tested</div>
+            <div class="v" id="statFbs">0</div>
+            <div class="d">จำนวนกลุ่มเสี่ยงที่ได้รับการตรวจน้ำตาลในเลือด FBS</div>
+          </div>
+          <div class="stat">
+            <div class="k">Red FBS ≥126</div>
+            <div class="v" id="statRed">0</div>
+            <div class="d">Pool ที่มีผล FBS ระดับสูงก่อน convert เป็น DM type II</div>
+          </div>
+          <div class="stat">
+            <div class="k">DM type II</div>
+            <div class="v" id="statDm">0</div>
+            <div class="d">Target output หลักของ journey นี้</div>
+          </div>
+          <div class="stat">
+            <div class="k">Compliance CPG</div>
+            <div class="v" id="statCpg">0</div>
+            <div class="d">คำนวณจาก DM type II × compliance rate</div>
+          </div>
+          <div class="stat">
+            <div class="k">DM retention</div>
+            <div class="v" id="statRetention">0</div>
+            <div class="d">คำนวณจาก DM type II × retention rate ตาม workbook</div>
+          </div>
+        </div>
+
+        <div class="panel flow-panel">
+          <h2>Patient Journey Flow</h2>
+          <p class="subtext">Forward และ Backward ใช้สูตร pure funnel ชุดเดียวกัน จึงให้ conversion rate เท่ากันทุกครั้งเมื่อใช้ target เดียวกัน</p>
+
+          <div class="main-flow">
+            <div class="stage">
+              <div class="n">1</div>
+              <h3>Risk Factors</h3>
+              <div class="desc">กลุ่มเสี่ยงตาม Risk Factors ซึ่งเป็น upstream requirement เพื่อรองรับเป้าหมาย DM type II</div>
+              <div class="divider"></div>
+              <div class="value" id="stageRisk">0</div>
+              <div class="metric"><span>Role</span><strong>Upstream pool</strong></div>
+              <div class="metric"><span>Workbook base</span><strong>D2 / D11</strong></div>
+              <div class="tag">Pure funnel requirement</div>
+            </div>
+
+            <div class="linker">
+              <div class="rate-badge"><strong id="badgeRiskToFbs">0%</strong><span>Risk → FBS</span></div>
+              ➜
+            </div>
+
+            <div class="stage">
+              <div class="n">2</div>
+              <h3>FBS Testing</h3>
+              <div class="desc">จำนวนกลุ่มเสี่ยงได้รับการตรวจน้ำตาลในเลือด FBS เพื่อเข้าสู่การแบ่งกลุ่มตามผลตรวจ</div>
+              <div class="divider"></div>
+              <div class="value" id="stageFbs">0</div>
+              <div class="metric"><span>Red branch</span><strong id="metricRedShare">0%</strong></div>
+              <div class="metric"><span>Yellow branch</span><strong id="metricYellowShare">0%</strong></div>
+              <div class="metric"><span>Green branch</span><strong id="metricGreenShare">0%</strong></div>
+              <div class="tag">Segmentation hub</div>
+            </div>
+
+            <div class="linker">
+              <div class="rate-badge"><strong id="badgeFbsToRed">0%</strong><span>FBS → Red</span></div>
+              ➜
+            </div>
+
+            <div class="stage">
+              <div class="n">3</div>
+              <h3>Red FBS &ge;126</h3>
+              <div class="desc">กลุ่มที่มีผล FBS สูงและมีโอกาสแปลงเป็นผู้ป่วย DM type II ตาม conversion ของ workbook</div>
+              <div class="divider"></div>
+              <div class="value" id="stageRed">0</div>
+              <div class="metric"><span>Yellow 3m-F/U</span><strong id="metricYellowFu">0</strong></div>
+              <div class="metric"><span>Green 1Y-F/U</span><strong id="metricGreenFu">0</strong></div>
+              <div class="metric"><span>Retention pool</span><strong id="metricRetention">0</strong></div>
+              <div class="tag">High-risk diagnosis pool</div>
+            </div>
+
+            <div class="linker">
+              <div class="rate-badge"><strong id="badgeRedToDm">0%</strong><span>Red → DM</span></div>
+              ➜
+            </div>
+
+            <div class="stage">
+              <div class="n">4</div>
+              <h3>DM type II</h3>
+              <div class="desc">Target output หลักของ workbook และเป็นฐานคำนวณ downstream compliance กับ retention</div>
+              <div class="divider"></div>
+              <div class="value" id="stageDm">0</div>
+              <div class="metric"><span>Compliance CPG</span><strong id="metricCpg">0</strong></div>
+              <div class="metric"><span>DM Retention</span><strong id="metricDmRetention">0</strong></div>
+              <div class="metric"><span>Display mode</span><strong id="metricMode">Forward</strong></div>
+              <div class="tag">Target output</div>
+            </div>
+
+            <div class="linker">
+              <div class="rate-badge"><strong id="badgeDmToCpg">0%</strong><span>DM → CPG</span></div>
+              ➜
+            </div>
+
+            <div class="stage">
+              <div class="n">5</div>
+              <h3>Compliance CPG</h3>
+              <div class="desc">ผลลัพธ์ downstream จากการดูแลตาม clinical practice guideline และสามารถใช้ต่อยอดกับ KPI quality ได้</div>
+              <div class="divider"></div>
+              <div class="value" id="stageCpg">0</div>
+              <div class="metric"><span>Rate from DM type II</span><strong id="metricCpgRate">0%</strong></div>
+              <div class="metric"><span>Workbook cell</span><strong>L2 / L11</strong></div>
+              <div class="metric"><span>Status</span><strong class="ok">Scenario aligned</strong></div>
+              <div class="tag">Quality output</div>
+            </div>
+          </div>
+
+          <div class="branch-wrap">
+            <div class="branch">
+              <div class="branch-head">
+                <h4>Yellow branch</h4>
+                <div class="mini-rate" id="yellowRatePill">29.00% from FBS</div>
+              </div>
+              <div class="branch-grid">
+                <div class="mini-card">
+                  <div class="mini-title">Yellow FBS 100–125 mg/dl</div>
+                  <div class="mini-value" id="yellowPool">0</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-title">3m-F/U HbA1C + FBS</div>
+                  <div class="mini-value" id="yellowFuValue">0</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch">
+              <div class="branch-head">
+                <h4>Green branch</h4>
+                <div class="mini-rate" id="greenRatePill">59.00% from FBS</div>
+              </div>
+              <div class="branch-grid">
+                <div class="mini-card">
+                  <div class="mini-title">Green FBS &lt;100 mg/dl</div>
+                  <div class="mini-value" id="greenPool">0</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-title">1Y-F/U HbA1C + FBS</div>
+                  <div class="mini-value" id="greenFuValue">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="formula-grid">
+            <div class="formula-list">
+              <div class="formula-item">
+                <div class="label">Workbook logic</div>
+                <code id="formulaRisk">Risk Factors = DM type II ÷ (Risk→FBS × FBS→Red × Red→DM)</code>
+              </div>
+              <div class="formula-item">
+                <div class="label">Branch outputs</div>
+                <code id="formulaBranch">Yellow F/U = FBS × Yellow rate × Yellow F/U rate · Green F/U = FBS × Green rate × Green F/U rate</code>
+              </div>
+            </div>
+            <div class="formula-list">
+              <div class="formula-item">
+                <div class="label">Workbook defaults</div>
+                <code id="workbookDefaults">Target DM type II = 7,266 · Risk→FBS = 21.00% · FBS→Red = 12.00% · Red→DM = 83.00% · DM→CPG = 12.23%</code>
+              </div>
+              <div class="formula-item">
+                <div class="label">Scenario status</div>
+                <code id="scenarioStatus">Ready</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">สร้างจาก workbook ที่แนบ: main funnel ยึดค่า D2, F2, H2, J2, L2 และ branch ยึด H3/J3, H4/J4, L3 ตามสัดส่วนที่ระบุใน sheet.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const DEFAULTS = {
+      targetDm: 7266,
+      riskToFbs: 21,
+      fbsToRed: 12,
+      redToDm: 83,
+      dmToCpg: 12.23,
+      dmRetention: 71,
+      fbsToYellow: 29,
+      yellowToFu: 100,
+      fbsToGreen: 59,
+      greenToFu: 100
+    };
+
+    const ids = [
+      'targetDm','riskToFbs','fbsToRed','redToDm','dmToCpg','dmRetention','fbsToYellow','yellowToFu','fbsToGreen','greenToFu'
+    ];
+
+    let mode = 'forward';
+
+    const el = (id) => document.getElementById(id);
+    const pct = (n, digits = 2) => `${Number(n || 0).toFixed(digits)}%`;
+    const safe = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+    const toRatio = (v) => safe(v) / 100;
+
+    function fmtNum(n, digits = 0) {
+      const value = Number.isFinite(n) ? n : 0;
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      }).format(value);
+    }
+
+    function setDefaults() {
+      ids.forEach((id) => { el(id).value = DEFAULTS[id]; });
+      calculate();
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      el('forwardBtn').classList.toggle('active', mode === 'forward');
+      el('backwardBtn').classList.toggle('active', mode === 'backward');
+      calculate();
+    }
+
+    function autoFitText(selector, maxSize, minSize) {
+      document.querySelectorAll(selector).forEach((node) => {
+        node.style.fontSize = '';
+        let size = Math.min(parseFloat(window.getComputedStyle(node).fontSize) || maxSize, maxSize);
+        node.style.fontSize = `${size}px`;
+        while (size > minSize && node.scrollWidth > node.clientWidth + 1) {
+          size -= 1;
+          node.style.fontSize = `${size}px`;
+        }
+      });
+    }
+
+    function fitJourneyValues() {
+      autoFitText('.stage .value', 28, 16);
+      autoFitText('.mini-value', 24, 15);
+    }
+
+    function calculate() {
+      const rounding = 0;
+      const targetDm = Math.max(0, safe(el('targetDm').value));
+      const riskToFbs = toRatio(el('riskToFbs').value);
+      const fbsToRed = toRatio(el('fbsToRed').value);
+      const redToDm = toRatio(el('redToDm').value);
+      const dmToCpg = toRatio(el('dmToCpg').value);
+      const dmRetention = toRatio(el('dmRetention').value);
+      const fbsToYellow = toRatio(el('fbsToYellow').value);
+      const yellowToFu = toRatio(el('yellowToFu').value);
+      const fbsToGreen = toRatio(el('fbsToGreen').value);
+      const greenToFu = toRatio(el('greenToFu').value);
+
+      const coreDenom = riskToFbs * fbsToRed * redToDm;
+      const status = [];
+      if (riskToFbs <= 0) status.push('Risk→FBS');
+      if (fbsToRed <= 0) status.push('FBS→Red');
+      if (redToDm <= 0) status.push('Red→DM');
+
+      let risk = 0;
+      let fbs = 0;
+      let red = 0;
+
+      if (coreDenom > 0 && targetDm > 0) {
+        if (mode === 'backward') {
+          red = targetDm / redToDm;
+          fbs = red / fbsToRed;
+          risk = fbs / riskToFbs;
+        } else {
+          risk = targetDm / coreDenom;
+          fbs = risk * riskToFbs;
+          red = fbs * fbsToRed;
+        }
+      }
+
+      const dm = red * redToDm;
+      const cpg = dm * dmToCpg;
+      const retention = dm * dmRetention;
+      const yellowPool = fbs * fbsToYellow;
+      const yellowFu = yellowPool * yellowToFu;
+      const greenPool = fbs * fbsToGreen;
+      const greenFu = greenPool * greenToFu;
+
+      el('statRisk').textContent = fmtNum(risk, rounding);
+      el('statFbs').textContent = fmtNum(fbs, rounding);
+      el('statRed').textContent = fmtNum(red, rounding);
+      el('statDm').textContent = fmtNum(dm, rounding);
+      el('statCpg').textContent = fmtNum(cpg, rounding);
+      el('statRetention').textContent = fmtNum(retention, rounding);
+
+      el('stageRisk').textContent = fmtNum(risk, rounding);
+      el('stageFbs').textContent = fmtNum(fbs, rounding);
+      el('stageRed').textContent = fmtNum(red, rounding);
+      el('stageDm').textContent = fmtNum(dm, rounding);
+      el('stageCpg').textContent = fmtNum(cpg, rounding);
+
+      el('metricRedShare').textContent = pct(safe(el('fbsToRed').value), 2);
+      el('metricYellowShare').textContent = pct(safe(el('fbsToYellow').value), 2);
+      el('metricGreenShare').textContent = pct(safe(el('fbsToGreen').value), 2);
+      el('metricYellowFu').textContent = fmtNum(yellowFu, rounding);
+      el('metricGreenFu').textContent = fmtNum(greenFu, rounding);
+      el('metricRetention').textContent = fmtNum(retention, rounding);
+      el('metricCpg').textContent = fmtNum(cpg, rounding);
+      el('metricDmRetention').textContent = fmtNum(retention, rounding);
+      el('metricCpgRate').textContent = pct(safe(el('dmToCpg').value), 2);
+      el('metricMode').textContent = mode === 'forward' ? 'Forward' : 'Backward';
+
+      el('badgeRiskToFbs').textContent = pct(safe(el('riskToFbs').value), 2);
+      el('badgeFbsToRed').textContent = pct(safe(el('fbsToRed').value), 2);
+      el('badgeRedToDm').textContent = pct(safe(el('redToDm').value), 2);
+      el('badgeDmToCpg').textContent = pct(safe(el('dmToCpg').value), 2);
+
+      el('yellowPool').textContent = fmtNum(yellowPool, rounding);
+      el('yellowFuValue').textContent = fmtNum(yellowFu, rounding);
+      el('greenPool').textContent = fmtNum(greenPool, rounding);
+      el('greenFuValue').textContent = fmtNum(greenFu, rounding);
+      el('yellowRatePill').textContent = `${pct(safe(el('fbsToYellow').value), 2)} from FBS`;
+      el('greenRatePill').textContent = `${pct(safe(el('fbsToGreen').value), 2)} from FBS`;
+
+      el('formulaRisk').textContent = `Risk Factors = DM type II ÷ (${pct(safe(el('riskToFbs').value), 2)} × ${pct(safe(el('fbsToRed').value), 2)} × ${pct(safe(el('redToDm').value), 2)})`;
+      el('formulaBranch').textContent = `Yellow F/U = FBS × ${pct(safe(el('fbsToYellow').value), 2)} × ${pct(safe(el('yellowToFu').value), 2)} · Green F/U = FBS × ${pct(safe(el('fbsToGreen').value), 2)} × ${pct(safe(el('greenToFu').value), 2)} · DM Retention = DM type II × ${pct(safe(el('dmRetention').value), 2)}`;
+      el('workbookDefaults').textContent = `Target DM type II = ${fmtNum(DEFAULTS.targetDm, 0)} · Risk→FBS = ${pct(DEFAULTS.riskToFbs, 2)} · FBS→Red = ${pct(DEFAULTS.fbsToRed, 2)} · Red→DM = ${pct(DEFAULTS.redToDm, 2)} · DM→CPG = ${pct(DEFAULTS.dmToCpg, 2)} · DM Retention = ${pct(DEFAULTS.dmRetention, 2)}`;
+
+      el('modeNote').textContent = mode === 'forward'
+        ? 'Forward mode จะหา upstream requirement จาก Target DM type II ก่อน แล้วไหลลงมาทีละ stage ด้วย conversion rates เดิมของ workbook'
+        : 'Backward mode จะคำนวณย้อนจาก Target DM type II กลับไปยัง Red FBS, FBS Testing และ Risk Factors ด้วย rates ชุดเดียวกัน';
+
+      if (status.length > 0) {
+        el('scenarioStatus').textContent = `กรุณาใส่ค่า conversion rate ให้มากกว่า 0 ที่: ${status.join(', ')}`;
+      } else {
+        el('scenarioStatus').textContent = `คำนวณสำเร็จ · DM type II = ${fmtNum(dm, rounding)} · Risk Factors required = ${fmtNum(risk, rounding)} · Branch outcomes updated`;
+      }
+
+      requestAnimationFrame(fitJourneyValues);
+    }
+
+    el('forwardBtn').addEventListener('click', () => setMode('forward'));
+    el('backwardBtn').addEventListener('click', () => setMode('backward'));
+    el('calcBtn').addEventListener('click', calculate);
+    el('defaultBtn').addEventListener('click', setDefaults);
+    ids.forEach((id) => {
+      el(id).addEventListener('input', calculate);
+      el(id).addEventListener('change', calculate);
+    });
+
+    window.addEventListener('resize', fitJourneyValues);
+
+    setDefaults();
+  </script>
+</body>
+</html>

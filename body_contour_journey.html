@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Journey · Body Contour — Bangkok Hospital Siriroj</title>
+<style>
+:root{
+  --navy:#12388b;
+  --navy-dark:#0b2560;
+  --navy-soft:#eaf0fb;
+  --red:#c3192d;
+  --red-soft:#fff0f3;
+  --gray:#8b9aac;
+  --gray-2:#eef2f7;
+  --text:#182433;
+  --text-soft:#5c6b7d;
+  --white:#ffffff;
+  --success:#0f9d74;
+  --warning:#e07a00;
+  --shadow-sm:0 10px 28px rgba(18,56,139,.08);
+  --shadow-md:0 18px 44px rgba(18,56,139,.12);
+  --radius:22px;
+  --radius-sm:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,#f7f9fc 0%,#edf2f8 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}
+.container{max-width:1440px;margin:0 auto;padding:0 28px 42px}
+.header{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 58%,#1f4aa0 100%);
+  color:#fff;
+}
+.header::before,.header::after{content:"";position:absolute;border-radius:50%;opacity:.24;filter:blur(4px)}
+.header::before{width:360px;height:360px;right:-120px;top:-120px;background:radial-gradient(circle,var(--red) 0%, transparent 70%)}
+.header::after{width:320px;height:320px;left:-90px;bottom:-130px;background:radial-gradient(circle,#9eb4ea 0%, transparent 70%)}
+.header-inner{position:relative;z-index:2;max-width:1440px;margin:0 auto;padding:28px;display:flex;gap:22px;align-items:center}
+.logo-shell{width:94px;height:94px;background:#fff;border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px rgba(0,0,0,.16);flex-shrink:0}
+.logo-shell img{width:76px;height:76px;object-fit:cover;border-radius:16px}
+.header-copy h1{margin:0;font-size:clamp(28px,3vw,42px);line-height:1.05;font-weight:800;letter-spacing:-.03em}
+.header-copy .sub{margin-top:8px;color:rgba(255,255,255,.8);font-size:15px}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+  font-size:12px;font-weight:800;letter-spacing:.02em;border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px)
+}
+.badge.red{background:rgba(195,25,45,.22);border-color:rgba(255,138,153,.28)}
+.top-grid{display:grid;grid-template-columns:1.28fr .92fr;gap:18px;margin-top:-20px;position:relative;z-index:3}
+.card{background:rgba(255,255,255,.97);border:1px solid rgba(18,56,139,.08);box-shadow:var(--shadow-sm);border-radius:var(--radius);backdrop-filter:blur(10px)}
+.control-card,.metric-panel,.flow-wrap,.panel,.rate-panel{padding:22px}
+.control-head,.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.title{font-size:18px;font-weight:900;color:var(--navy);letter-spacing:-.02em}
+.subtitle{font-size:12px;color:var(--text-soft);margin-top:4px}
+.control-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.field,.small-field,.rate-item{background:var(--gray-2);border-radius:16px;padding:14px;border:1px solid rgba(18,56,139,.06)}
+.label{font-size:11px;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.input-wrap{display:flex;align-items:center;gap:10px}
+.input-wrap input{width:100%;border:0;outline:0;background:#fff;border-radius:12px;padding:12px 14px;font-size:24px;font-weight:900;color:var(--navy-dark);box-shadow:inset 0 0 0 2px rgba(18,56,139,.08)}
+.input-wrap small{font-size:12px;color:var(--text-soft);font-weight:800;white-space:nowrap}
+.mode-toggle{display:inline-flex;background:var(--gray-2);padding:5px;border-radius:14px;border:1px solid rgba(18,56,139,.08)}
+.mode-toggle button{border:0;background:transparent;color:var(--text-soft);font-weight:900;padding:10px 18px;border-radius:10px;cursor:pointer;transition:.25s}
+.mode-toggle button.active{background:var(--navy);color:#fff;box-shadow:0 8px 18px rgba(18,56,139,.18)}
+.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+button.primary,button.ghost{border:0;border-radius:12px;padding:12px 18px;font-weight:900;cursor:pointer;transition:.2s}
+button.primary{background:var(--navy);color:#fff}
+button.primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+button.ghost{background:#fff;color:var(--navy);box-shadow:inset 0 0 0 2px rgba(18,56,139,.12)}
+button.ghost:hover{background:var(--navy-soft)}
+.metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.metric{padding:16px 16px 14px;border-radius:16px;background:linear-gradient(180deg,#fff 0%,#f7faff 100%);border:1px solid rgba(18,56,139,.08)}
+.metric .k{font-size:11px;color:var(--text-soft);font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.metric .v{font-size:29px;font-weight:900;color:var(--navy-dark);margin-top:8px;letter-spacing:-.03em}
+.metric .v.red{color:var(--red)}
+.metric .v.good{color:var(--success)}
+.metric .v.warn{color:var(--warning)}
+.metric .hint{font-size:12px;color:var(--text-soft);margin-top:6px;line-height:1.5}
+.section{margin-top:22px}
+.section-title{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.section-title .line{width:5px;height:24px;border-radius:999px;background:var(--red)}
+.section-title h2{margin:0;color:var(--navy);font-size:20px;font-weight:900;letter-spacing:-.02em}
+.flow-wrap{overflow:hidden}
+.flow-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.12fr) minmax(64px,.45fr) minmax(0,1.12fr) minmax(64px,.45fr)
+                        minmax(0,1.12fr) minmax(64px,.45fr) minmax(0,1.12fr) minmax(64px,.45fr)
+                        minmax(0,1.12fr);
+  gap:12px;align-items:stretch
+}
+.step-card{
+  height:100%;padding:16px 12px;border-radius:20px;background:#fff;border:1px solid rgba(18,56,139,.08);
+  box-shadow:var(--shadow-sm);text-align:center;position:relative;overflow:hidden
+}
+.step-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:rgba(18,56,139,.32)}
+.step.current .step-card::before{background:linear-gradient(90deg,#5b8dff,#153f9b)}
+.step.target .step-card{background:linear-gradient(180deg,var(--red-soft) 0%, #fff 42%);border-color:rgba(195,25,45,.18)}
+.step.target .step-card::before{background:var(--red)}
+.step-icon{font-size:28px}
+.step-index{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--navy-soft);color:var(--navy);font-weight:900;font-size:13px;margin:10px auto 12px}
+.step.target .step-index{background:var(--red);color:#fff}
+.step-title-text{font-size:12px;font-weight:800;color:var(--navy);line-height:1.35;min-height:42px;display:flex;align-items:center;justify-content:center}
+.step-value{font-size:clamp(22px,2vw,32px);font-weight:900;color:var(--navy-dark);margin-top:10px;letter-spacing:-.03em}
+.step.target .step-value{color:var(--red)}
+.step-sub{margin-top:4px;color:var(--text-soft);font-size:12px;font-weight:700}
+.step-mini{margin-top:10px;background:var(--gray-2);border-radius:999px;padding:6px 10px;font-size:10px;color:var(--text-soft);font-weight:800;display:inline-block}
+.arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+.arrow-badge{border-radius:16px;padding:8px;background:linear-gradient(180deg,#fff 0%,#edf3ff 100%);border:1px solid rgba(18,56,139,.10);text-align:center;width:100%}
+.arrow-badge .rate{font-size:18px;font-weight:900;color:var(--navy)}
+.arrow-badge .stage{font-size:9px;color:var(--text-soft);font-weight:800;line-height:1.3;margin-top:2px}
+.arrow-line{position:relative;width:100%;height:18px}
+.arrow-line::before{content:"";position:absolute;left:8px;right:18px;top:7px;height:4px;border-radius:999px;background:linear-gradient(90deg,rgba(18,56,139,.25),rgba(18,56,139,.72),rgba(195,25,45,.55))}
+.arrow-line::after{content:"";position:absolute;right:8px;top:3px;width:10px;height:10px;border-top:3px solid var(--navy);border-right:3px solid var(--navy);transform:rotate(45deg)}
+.flow-grid.backward .arrow-line::before{left:18px;right:8px}
+.flow-grid.backward .arrow-line::after{left:8px;right:auto;border-top:0;border-right:0;border-left:3px solid var(--navy);border-bottom:3px solid var(--navy);transform:rotate(45deg)}
+.flow-caption{margin-top:14px;padding:14px 16px;border-radius:16px;background:#f6f9ff;border-left:4px solid var(--navy);font-size:13px;color:var(--text-soft);line-height:1.6}
+.flow-caption strong{color:var(--navy)}
+.triple-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.panel h3,.rate-panel h3{margin:0;color:var(--navy);font-size:16px;font-weight:900;letter-spacing:-.02em}
+.panel .panel-sub,.rate-panel .panel-sub{margin-top:4px;color:var(--text-soft);font-size:12px}
+.input-grid,.rate-grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:12px;margin-top:16px}
+.small-field input,.rate-item input{width:100%;margin-top:8px;padding:11px 12px;border:0;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 2px rgba(18,56,139,.08);font-size:18px;font-weight:900;color:var(--navy-dark);outline:0}
+.small-field .tiny,.rate-item .tiny{font-size:12px;color:var(--text-soft);font-weight:700;line-height:1.4}
+.channel-code{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--navy-soft);font-weight:900;color:var(--navy);margin-right:8px}
+.contrib-list{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:12px;margin-top:16px}
+.contrib-item{padding:14px;border-radius:16px;background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);border:1px solid rgba(18,56,139,.08)}
+.contrib-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.contrib-name{font-weight:900;color:var(--text)}
+.contrib-route{margin-top:4px;font-size:11px;color:var(--text-soft);font-weight:700}
+.contrib-chip{padding:6px 10px;border-radius:999px;background:var(--navy-soft);color:var(--navy);font-size:11px;font-weight:900}
+.contrib-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.contrib-metric{padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(18,56,139,.08)}
+.contrib-k{font-size:10px;color:var(--text-soft);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.contrib-v{font-size:20px;font-weight:900;color:var(--navy-dark);margin-top:6px}
+.progress-track{height:8px;border-radius:999px;background:var(--gray-2);margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--red));width:0%}
+.legend-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.legend{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft);font-weight:800}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.footer-note{margin-top:18px;color:var(--text-soft);font-size:12px;line-height:1.6}
+@media (max-width:1180px){
+  .top-grid,.triple-grid{grid-template-columns:1fr}
+}
+@media (max-width:1040px){
+  .flow-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .arrow{display:none}
+}
+@media (max-width:760px){
+  .container{padding:0 18px 30px}
+  .header-inner{padding:20px 18px}
+  .control-row,.metric-grid,.contrib-metrics{grid-template-columns:1fr}
+  .flow-grid{grid-template-columns:1fr}
+  .logo-shell{width:84px;height:84px}
+  .logo-shell img{width:68px;height:68px}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-shell">
+      <img src="data:image/jpeg;base64,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" alt="Bangkok Hospital theme">
+    </div>
+    <div class="header-copy">
+      <h1>Patient Journey · Body Contour</h1>
+      <div class="sub">ระบบ SBU_PPSI · Bangkok Hospital Siriroj · Interactive planning view</div>
+      <div class="badge-row">
+        <div class="badge">🏥 Bangkok Hospital Siriroj</div>
+        <div class="badge">✨ Body Contour</div>
+        <div class="badge red">🧩 SBU_PPSI</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="top-grid">
+    <section class="card control-card">
+      <div class="control-head">
+        <div>
+          <div class="title">Scenario Controls</div>
+          <div class="subtitle">ตั้งค่า target และดู pure funnel แบบ interactive</div>
+        </div>
+        <div class="mode-toggle" aria-label="Calculation mode">
+          <button id="modeForward" class="active" type="button">Forward</button>
+          <button id="modeBackward" type="button">Backward</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="field">
+          <div class="label">Target Output</div>
+          <div class="input-wrap">
+            <input id="targetInput" type="number" min="0" step="1" value="0">
+            <small>Procedures</small>
+          </div>
+        </div>
+        <div class="field">
+          <div class="label">Base Funnel Conversion</div>
+          <div id="baseConversionDisplay" style="font-size:30px;font-weight:900;color:var(--red);margin-top:4px">-</div>
+          <div class="subtitle" style="margin-top:10px">Entry point → Body Contour</div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="primary" id="calculateBtn" type="button">⟳ Calculate</button>
+        <button class="ghost" id="resetBtn" type="button">Reset Workbook Defaults</button>
+      </div>
+    </section>
+
+    <aside class="card metric-panel">
+      <div class="title">Quick Summary</div>
+      <div class="subtitle">สรุปผลจาก target และ channel inputs ปัจจุบัน</div>
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="k">Projected Body Contour</div>
+          <div class="v" id="metricProjected">-</div>
+          <div class="hint">ผลรวมจาก channel volumes ปัจจุบัน</div>
+        </div>
+        <div class="metric">
+          <div class="k">Gap vs Target</div>
+          <div class="v" id="metricGap">-</div>
+          <div class="hint">บวก = เกิน target / ลบ = ต่ำกว่า target</div>
+        </div>
+        <div class="metric">
+          <div class="k">Required Entry Points</div>
+          <div class="v red" id="metricRequiredEntry">-</div>
+          <div class="hint">จำนวนเคสต้นทางที่ต้องมีเพื่อให้ถึง target</div>
+        </div>
+        <div class="metric">
+          <div class="k">Current Entry Points</div>
+          <div class="v" id="metricCurrentEntry">-</div>
+          <div class="hint">รวม channel volume ชุดเดียวกับ Driver Inputs</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="section card flow-wrap">
+    <div class="section-title">
+      <div class="line"></div>
+      <h2>Patient Journey Flow</h2>
+    </div>
+    <div class="flow-grid" id="flowGrid"></div>
+    <div class="flow-caption" id="flowCaption"></div>
+  </section>
+
+  <div class="triple-grid section">
+    <section class="card panel">
+      <div class="panel-head">
+        <div>
+          <h3>Driver Inputs</h3>
+          <div class="panel-sub">ปรับ channel volume ที่จุดเริ่มต้นของ funnel</div>
+        </div>
+      </div>
+      <div class="input-grid" id="inputGrid"></div>
+      <div class="footer-note">Channel volume ในส่วนนี้จะเป็นชุดเดียวกันกับ Channel Contribution แบบ 1:1</div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <div>
+          <h3>Channel Contribution to Body Contour</h3>
+          <div class="panel-sub">คำนวณผลลัพธ์ปลายทางจาก channel volume ชุดเดียวกับ Driver Inputs</div>
+        </div>
+      </div>
+      <div class="contrib-list" id="contribList"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const DEFAULT_DATA = {"hospital": "Bangkok Hospital Siriroj", "system": "SBU_PPSI", "journey": "Body Contour", "targetLabel": "Body Contour Procedures", "defaultTarget": 0.0, "stages": ["Entry point", "Eligibility Screening", "Consult", "Surgery", "Body Contour"], "rates": [0.69, 0.43, 0.76, 1.0], "channels": [{"code": "A", "type": "B2B", "name": "Agency Forcus Tranwoman อายุ 25-60 ปี Area ยุโรป ออสเตรเรีย นิวซีแลนส์ เกาหลี", "volume": 0.0}, {"code": "B", "type": "B2C", "name": "LGBT Q Community Tranwoman อายุ 25-60 ปี Area ยุโรป ออสเตรเรีย นิวซีแลนซ์", "volume": 0.0}, {"code": "C", "type": "Referal form old patient", "name": "Old patient ปี 2017-2025", "volume": 0.0}]};
+const state = {
+  mode: 'forward',
+  target: DEFAULT_DATA.defaultTarget,
+  rates: [...DEFAULT_DATA.rates],
+  channels: DEFAULT_DATA.channels.map(ch => ({...ch}))
+};
+
+const stageIcons = ['🎯','🧪','🩺','🏥','✨'];
+
+const $ = (id) => document.getElementById(id);
+
+function clampRate(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
+function fmtInt(value) {
+  const safe = Number.isFinite(value) ? Math.round(value) : 0;
+  return safe.toLocaleString('en-US');
+}
+function fmtOne(value) {
+  const safe = Number.isFinite(value) ? value : 0;
+  return safe.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+}
+function fmtSigned(value) {
+  const safe = Number.isFinite(value) ? value : 0;
+  const sign = safe > 0 ? '+' : '';
+  return sign + fmtOne(safe);
+}
+function pct(value) {
+  return (value * 100).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 1}) + '%';
+}
+
+function computeRequirement(target, rates) {
+  const vals = new Array(DEFAULT_DATA.stages.length).fill(0);
+  vals[vals.length - 1] = Math.max(0, Number(target) || 0);
+  for (let i = rates.length - 1; i >= 0; i--) {
+    const r = clampRate(rates[i]);
+    vals[i] = r > 0 ? vals[i + 1] / r : 0;
+  }
+  return vals;
+}
+
+function projectChannel(entryVolume, rates) {
+  const stages = [Math.max(0, Number(entryVolume) || 0)];
+  for (let i = 0; i < rates.length; i++) {
+    stages.push(stages[i] * clampRate(rates[i]));
+  }
+  return stages;
+}
+
+function getComputed() {
+  const requirement = computeRequirement(state.target, state.rates);
+  const projectedByChannel = state.channels.map(ch => {
+    const stages = projectChannel(ch.volume, state.rates);
+    return {...ch, stages, final: stages[stages.length - 1]};
+  });
+  const currentStages = new Array(DEFAULT_DATA.stages.length).fill(0);
+  projectedByChannel.forEach(ch => ch.stages.forEach((v, i) => currentStages[i] += v));
+  const projected = currentStages[currentStages.length - 1];
+  const currentEntry = currentStages[0];
+  const gap = projected - state.target;
+  const baseConversion = state.rates.reduce((acc, r) => acc * clampRate(r), 1);
+  return {requirement, projectedByChannel, currentStages, projected, currentEntry, gap, baseConversion};
+}
+
+function renderInputs() {
+  $('inputGrid').innerHTML = state.channels.map((ch, idx) => `
+    <div class="small-field">
+      <div class="label"><span class="channel-code">${ch.code}</span>${ch.type}</div>
+      <div class="tiny">${ch.name}</div>
+      <input type="number" min="0" step="1" value="${Math.round(ch.volume)}" data-channel-index="${idx}">
+    </div>
+  `).join('');
+  Array.from(document.querySelectorAll('[data-channel-index]')).forEach(input => {
+    input.addEventListener('input', (e) => {
+      const idx = Number(e.target.dataset.channelIndex);
+      state.channels[idx].volume = Math.max(0, Number(e.target.value) || 0);
+      update();
+    });
+  });
+}
+
+function renderFlow(computed) {
+  const grid = $('flowGrid');
+  grid.classList.toggle('backward', state.mode === 'backward');
+  const cards = [];
+  for (let i = 0; i < DEFAULT_DATA.stages.length; i++) {
+    const isTarget = i === DEFAULT_DATA.stages.length - 1;
+    cards.push(`
+      <div class="step ${state.mode === 'forward' && i === 0 ? 'current' : ''} ${isTarget ? 'target' : ''}">
+        <div class="step-card">
+          <div class="step-icon">${stageIcons[i] || '•'}</div>
+          <div class="step-index">${i + 1}</div>
+          <div class="step-title-text">${DEFAULT_DATA.stages[i]}</div>
+          <div class="step-value">${fmtInt(computed.requirement[i])}</div>
+          <div class="step-sub">${isTarget ? 'Target output' : 'Required volume'}</div>
+          <div class="step-mini">${i === 0 ? 'Upstream requirement' : (isTarget ? 'Final procedure' : 'Stage requirement')}</div>
+        </div>
+      </div>
+    `);
+    if (i < state.rates.length) {
+      cards.push(`
+        <div class="arrow" aria-hidden="true">
+          <div class="arrow-badge">
+            <div class="rate">${pct(state.rates[i])}</div>
+            <div class="stage">${DEFAULT_DATA.stages[i]} → ${DEFAULT_DATA.stages[i + 1]}</div>
+          </div>
+          <div class="arrow-line"></div>
+        </div>
+      `);
+    }
+  }
+  grid.innerHTML = cards.join('');
+  $('flowCaption').innerHTML = state.mode === 'forward'
+    ? `<strong>Forward mode</strong> เริ่มจาก upstream requirement ที่ระบบคำนวณจาก target แบบ pure funnel แล้วไล่ลงมาทีละ stage ด้วย conversion rates ปัจจุบัน`
+    : `<strong>Backward mode</strong> คำนวณย้อนกลับจาก target ที่ Body Contour ไปยังทุก stage ก่อนหน้า ด้วย conversion rates ชุดเดียวกัน`;
+}
+
+function renderSummary(computed) {
+  $('baseConversionDisplay').textContent = pct(computed.baseConversion);
+  $('metricProjected').textContent = fmtOne(computed.projected);
+  $('metricGap').textContent = fmtSigned(computed.gap);
+  $('metricGap').className = 'v ' + (computed.gap >= 0 ? 'good' : 'warn');
+  $('metricRequiredEntry').textContent = fmtOne(computed.requirement[0]);
+  $('metricCurrentEntry').textContent = fmtInt(computed.currentEntry);
+}
+
+function renderContribution(computed) {
+  const maxFinal = Math.max(...computed.projectedByChannel.map(ch => ch.final), 1);
+  $('contribList').innerHTML = computed.projectedByChannel.map(ch => `
+    <div class="contrib-item">
+      <div class="contrib-top">
+        <div>
+          <div class="contrib-name">${ch.code} · ${ch.type}</div>
+          <div class="contrib-route">${ch.name}</div>
+        </div>
+        <div class="contrib-chip">${pct(ch.final / Math.max(computed.projected, 1e-9))} of projected</div>
+      </div>
+      <div class="contrib-metrics">
+        <div class="contrib-metric">
+          <div class="contrib-k">Channel Volume</div>
+          <div class="contrib-v">${fmtInt(ch.volume)}</div>
+        </div>
+        <div class="contrib-metric">
+          <div class="contrib-k">Body Contour</div>
+          <div class="contrib-v">${fmtOne(ch.final)}</div>
+        </div>
+        <div class="contrib-metric">
+          <div class="contrib-k">End-to-End Conversion</div>
+          <div class="contrib-v">${pct(computed.baseConversion)}</div>
+        </div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${Math.max(4, (ch.final / maxFinal) * 100)}%"></div></div>
+    </div>
+  `).join('');
+}
+
+function update() {
+  const target = Math.max(0, Number($('targetInput').value) || 0);
+  state.target = target;
+  const computed = getComputed();
+  renderSummary(computed);
+  renderFlow(computed);
+  renderContribution(computed);
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  $('modeForward').classList.toggle('active', mode === 'forward');
+  $('modeBackward').classList.toggle('active', mode === 'backward');
+  update();
+}
+
+$('modeForward').addEventListener('click', () => setMode('forward'));
+$('modeBackward').addEventListener('click', () => setMode('backward'));
+$('calculateBtn').addEventListener('click', update);
+$('targetInput').addEventListener('input', update);
+$('resetBtn').addEventListener('click', () => {
+  state.target = DEFAULT_DATA.defaultTarget;
+  state.rates = [...DEFAULT_DATA.rates];
+  state.channels = DEFAULT_DATA.channels.map(ch => ({...ch}));
+  $('targetInput').value = Math.round(DEFAULT_DATA.defaultTarget);
+  renderInputs();
+  update();
+});
+
+renderInputs();
+update();
+</script>
+</body>
+</html>
