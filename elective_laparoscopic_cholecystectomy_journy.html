@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Journey · Laparoscopic Cholecystectomy</title>
+  <style>
+    :root{
+      --bg:#f6f9fd;
+      --surface:#ffffff;
+      --surface-2:#f2f7fc;
+      --line:#d9e6f3;
+      --line-strong:#bad0e6;
+      --text:#1c2c3d;
+      --muted:#61758a;
+      --blue:#0b70c9;
+      --blue-2:#eaf4fd;
+      --blue-3:#d8ecfb;
+      --navy:#0d4f8a;
+      --navy-2:#083962;
+      --teal:#19a0b5;
+      --gold:#ffcf4d;
+      --gold-2:#fff5cf;
+      --shadow:0 14px 36px rgba(19,74,124,.10);
+      --shadow-soft:0 8px 22px rgba(19,74,124,.08);
+      --radius:24px;
+      --radius-sm:16px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#f8fbfe 0%, #f2f7fc 100%);color:var(--text);font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}
+    body{padding:26px}
+
+    .page{max-width:1360px;margin:0 auto}
+
+    .hero{
+      background:linear-gradient(135deg,#fafdff 0%, #eff7fd 100%);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      border-radius:30px;
+      padding:24px 28px;
+      display:flex;
+      justify-content:space-between;
+      gap:24px;
+      align-items:center;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -60px auto;
+      width:260px;height:260px;border-radius:50%;
+      background:radial-gradient(circle, rgba(11,112,201,.12) 0%, rgba(25,160,181,.07) 45%, rgba(255,255,255,0) 72%);
+      pointer-events:none;
+    }
+    .hero-left{display:flex;gap:18px;align-items:flex-start;position:relative;z-index:1}
+    .logo{
+      width:72px;height:72px;border-radius:22px;
+      background:linear-gradient(180deg,#0b70c9 0%, #0d4f8a 100%);
+      display:grid;place-items:center;flex:0 0 auto;
+      box-shadow:var(--shadow-soft);
+    }
+    .logo svg{width:40px;height:40px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 12px;border-radius:999px;
+      background:var(--blue-2);color:var(--blue);
+      font-size:12px;font-weight:700;letter-spacing:.02em;
+      margin-bottom:10px;
+      border:1px solid var(--blue-3);
+    }
+    h1{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.03em}
+    .subtitle{margin-top:8px;color:var(--muted);font-size:14px;line-height:1.5}
+    .hero-stats{display:flex;gap:14px;flex-wrap:wrap;position:relative;z-index:1}
+    .hero-pill{
+      min-width:148px;
+      background:rgba(255,255,255,.86);
+      backdrop-filter: blur(8px);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:12px 14px;
+      box-shadow:var(--shadow-soft);
+    }
+    .hero-pill .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+    .hero-pill .value{margin-top:6px;font-size:24px;font-weight:800;color:var(--navy-2)}
+    .hero-pill .sub{margin-top:2px;font-size:12px;color:var(--muted)}
+
+    .controls{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.35fr .95fr;
+      gap:18px;
+    }
+    .panel{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:26px;
+      box-shadow:var(--shadow-soft);
+      padding:20px 22px;
+    }
+    .panel h2{margin:0 0 16px;font-size:16px;letter-spacing:-.01em}
+    .input-grid{display:grid;grid-template-columns: repeat(3, minmax(0,1fr));gap:14px}
+    .field{display:flex;flex-direction:column;gap:8px}
+    .field label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
+    .field input{
+      width:100%;height:52px;border-radius:16px;border:1px solid var(--line-strong);
+      background:#fbfdff;padding:0 16px;font-size:24px;font-weight:800;color:var(--navy-2);outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease;
+    }
+    .field input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(11,112,201,.10)}
+    .suffix{position:relative}
+    .suffix span{
+      position:absolute;right:14px;top:50%;transform:translateY(-50%);
+      color:var(--muted);font-weight:700;font-size:13px;pointer-events:none;
+    }
+    .suffix input{padding-right:58px}
+    .actions{display:flex;gap:10px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin-top:16px}
+    button{
+      appearance:none;border:none;border-radius:16px;height:46px;padding:0 18px;cursor:pointer;
+      font-weight:800;font-size:14px;letter-spacing:.01em;transition:transform .15s ease, box-shadow .2s ease, background .2s ease;
+    }
+    button:hover{transform:translateY(-1px)}
+    .primary{background:linear-gradient(180deg,var(--blue) 0%, var(--navy) 100%);color:#fff;box-shadow:0 10px 18px rgba(11,112,201,.22)}
+    .ghost{background:#f5f9fd;color:var(--navy);border:1px solid var(--line)}
+    .mode-toggle{display:inline-flex;background:#f2f7fc;border:1px solid var(--line);padding:4px;border-radius:18px}
+    .mode-toggle button{height:38px;padding:0 16px;background:transparent;color:var(--muted);box-shadow:none}
+    .mode-toggle button.active{background:#fff;color:var(--navy);box-shadow:var(--shadow-soft)}
+    .micro-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
+
+    .rates-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .rate-card{background:var(--surface-2);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+    .rate-card .top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+    .rate-card .name{font-size:12px;font-weight:800;color:var(--navy);line-height:1.35}
+    .rate-card .badge{font-size:11px;font-weight:800;color:var(--blue);background:#fff;border:1px solid var(--line);padding:5px 8px;border-radius:999px;white-space:nowrap}
+    .rate-card input{
+      width:100%;height:44px;border-radius:14px;border:1px solid var(--line-strong);
+      background:#fff;padding:0 14px;font-size:20px;font-weight:800;color:var(--navy-2);outline:none;
+    }
+
+    .section{margin-top:18px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 12px;padding:0 4px}
+    .section-title h3{margin:0;font-size:17px;letter-spacing:-.01em}
+    .section-title .meta{font-size:12px;color:var(--muted)}
+
+    .flow-shell{
+      background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow-soft);
+      padding:18px 18px 16px;overflow:hidden;
+    }
+    .flow-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.15fr) 76px minmax(0,1fr) 76px minmax(0,1fr) 76px minmax(0,1fr) 76px minmax(0,1fr) 76px minmax(0,1.08fr);
+      gap:0;align-items:stretch;
+    }
+    .stage{
+      background:linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px 14px;
+      min-height:190px;
+      display:flex;flex-direction:column;justify-content:space-between;align-items:center;text-align:center;
+      position:relative;
+      box-shadow:0 8px 18px rgba(19,74,124,.05);
+    }
+    .stage.target{
+      background:linear-gradient(180deg,#0b70c9 0%, #0d4f8a 100%);
+      border-color:transparent;
+      color:#fff;
+    }
+    .stage .num{
+      width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+      background:#e8f3fc;color:var(--navy);font-size:13px;font-weight:900;margin-bottom:10px;
+    }
+    .stage.target .num{background:rgba(255,255,255,.18);color:#fff}
+    .stage .name{font-size:14px;font-weight:800;line-height:1.35;letter-spacing:-.01em;min-height:58px;display:grid;place-items:center}
+    .stage .caption{font-size:11px;color:var(--muted);line-height:1.35;min-height:30px;display:grid;place-items:center}
+    .stage.target .caption{color:rgba(255,255,255,.78)}
+    .stage .value-wrap{display:flex;flex-direction:column;gap:6px;align-items:center}
+    .stage .value{
+      font-size:clamp(28px, 2.4vw, 42px);
+      line-height:1;font-weight:900;letter-spacing:-.04em;color:var(--navy-2);
+      max-width:100%;word-break:keep-all;
+    }
+    .stage.target .value{color:#fff}
+    .stage .unit{font-size:12px;color:var(--muted);font-weight:700}
+    .stage.target .unit{color:rgba(255,255,255,.78)}
+
+    .connector{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 6px;
+    }
+    .connector .rate{
+      min-width:72px;text-align:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 8px;
+      box-shadow:0 8px 16px rgba(19,74,124,.06);
+    }
+    .connector .rate strong{display:block;font-size:20px;color:var(--navy-2);line-height:1}
+    .connector .rate span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800;margin-top:4px}
+    .connector .arrow{position:relative;width:100%;height:24px}
+    .connector .arrow::before{
+      content:"";position:absolute;left:8px;right:18px;top:10px;height:4px;border-radius:999px;background:linear-gradient(90deg,#8ec5ef 0%, #0b70c9 100%);
+    }
+    .connector .arrow::after{
+      content:"";position:absolute;right:9px;top:6px;width:11px;height:11px;border-top:4px solid var(--blue);border-right:4px solid var(--blue);transform:rotate(45deg);
+    }
+    .flow-shell.backward .connector .arrow::before{background:linear-gradient(90deg,#8ec5ef 0%, #19a0b5 45%, #0d4f8a 100%)}
+    .flow-shell.backward .connector .rate{background:#f8fcff}
+
+    .summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-top:14px}
+    .summary-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px 18px;box-shadow:0 8px 18px rgba(19,74,124,.05)}
+    .summary-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+    .summary-card .big{margin-top:8px;font-size:28px;line-height:1;font-weight:900;color:var(--navy-2);letter-spacing:-.04em}
+    .summary-card .small{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.45}
+
+    .footer-note{
+      margin-top:12px;padding:14px 16px;border-radius:18px;background:#f8fbff;border:1px solid var(--line);
+      color:var(--muted);font-size:12px;line-height:1.6;
+    }
+    .warning{color:#c26a00;font-weight:700}
+
+    @media (max-width: 1180px){
+      .controls{grid-template-columns:1fr}
+      .input-grid{grid-template-columns:1fr}
+      .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .flow-grid{
+        grid-template-columns:1fr;
+        gap:12px;
+      }
+      .connector{flex-direction:row;gap:12px;padding:0 8px 2px}
+      .connector .arrow{height:44px;width:28px;flex:0 0 28px}
+      .connector .arrow::before{left:12px;right:auto;top:6px;bottom:18px;width:4px;height:auto;background:linear-gradient(180deg,#8ec5ef 0%, #0b70c9 100%)}
+      .connector .arrow::after{top:auto;bottom:9px;right:auto;left:8px;transform:rotate(135deg)}
+      .connector .rate{min-width:96px}
+      .stage{min-height:162px}
+    }
+    @media (max-width: 760px){
+      body{padding:14px}
+      .hero{padding:20px}
+      .hero-left{flex-direction:column;gap:14px}
+      h1{font-size:25px}
+      .hero-stats{width:100%}
+      .hero-pill{flex:1 1 140px}
+      .rates-grid{grid-template-columns:1fr}
+      .summary-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="44" height="44" rx="12" fill="white" fill-opacity="0.14"/>
+            <path d="M32 18c2.8 5.6 8.4 11.2 14 14-5.6 2.8-11.2 8.4-14 14-2.8-5.6-8.4-11.2-14-14 5.6-2.8 11.2-8.4 14-14Z" fill="white"/>
+            <circle cx="32" cy="32" r="6.4" fill="#CFF0FF"/>
+          </svg>
+        </div>
+        <div>
+          <div class="eyebrow">ระบบ Elective Surgery</div>
+          <h1>Patient Journey · Laparoscopic Cholecystectomy</h1>
+          <div class="subtitle">Interactive planning view · pure funnel logic from workbook<br>Risk factor Ultrasound Abdomen → Result Positive → Consultant Surgeon → นัดผ่าตัดใน 30 วัน → มาผ่าตัดภายใน 30 วัน → Laparoscopic Cholecystectomy</div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-pill">
+          <div class="label">Default Target</div>
+          <div class="value" id="heroTarget">226</div>
+          <div class="sub">cases from workbook</div>
+        </div>
+        <div class="hero-pill">
+          <div class="label">Overall Conversion</div>
+          <div class="value" id="heroOverall">0.58%</div>
+          <div class="sub">15% × 80% × 80% × 90% × 100%</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="panel">
+        <h2>Scenario Controls</h2>
+        <div class="input-grid">
+          <div class="field">
+            <label for="targetInput">Target Output</label>
+            <div class="suffix">
+              <input id="targetInput" type="number" min="0" step="1" value="226" />
+              <span>cases</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Calculation Mode</label>
+            <div class="mode-toggle" aria-label="Calculation Mode">
+              <button id="modeBackward" class="active" type="button">Backward</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Action</label>
+            <div class="actions" style="margin-top:0">
+              <button class="primary" id="calcBtn" type="button">⟳ Calculate</button>
+              <button class="ghost" id="restoreBtn" type="button">Restore Workbook Rates</button>
+            </div>
+          </div>
+        </div>
+        <div class="micro-note">Patient Journey Flow แสดงผลในโหมด Backward เพื่อคำนวณ upstream requirement จาก Target Output โดยตรง</div>
+      </div>
+
+      <div class="panel">
+        <h2>Conversion Rates</h2>
+        <div class="rates-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="rate-card">
+            <div class="top"><div class="name">Risk factor → Result Positive</div><div class="badge">Workbook</div></div>
+            <input id="rate1" type="number" min="0" max="100" step="0.1" value="15" />
+          </div>
+          <div class="rate-card">
+            <div class="top"><div class="name">Result Positive → Consultant Surgeon</div><div class="badge">Workbook</div></div>
+            <input id="rate2" type="number" min="0" max="100" step="0.1" value="80" />
+          </div>
+          <div class="rate-card">
+            <div class="top"><div class="name">Consultant Surgeon → นัดผ่าตัด</div><div class="badge">Workbook</div></div>
+            <input id="rate3" type="number" min="0" max="100" step="0.1" value="80" />
+          </div>
+          <div class="rate-card">
+            <div class="top"><div class="name">นัดผ่าตัด → มาผ่าตัดภายใน 30 วัน</div><div class="badge">Workbook</div></div>
+            <input id="rate4" type="number" min="0" max="100" step="0.1" value="90" />
+          </div>
+          <div class="rate-card">
+            <div class="top"><div class="name">มาผ่าตัด → LC</div><div class="badge">Workbook</div></div>
+            <input id="rate5" type="number" min="0" max="100" step="0.1" value="100" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h3>Patient Journey Flow</h3>
+        <div class="meta" id="modeMeta">Backward mode · target-reconciled</div>
+      </div>
+      <div class="flow-shell" id="flowShell">
+        <div class="flow-grid">
+          <div class="stage">
+            <div class="num">1</div>
+            <div class="name">Risk factor<br>Ultrasound Abdomen</div>
+            <div class="caption">Required upstream pool</div>
+            <div class="value-wrap">
+              <div class="value" id="stage1">–</div>
+              <div class="unit">cases</div>
+            </div>
+          </div>
+          <div class="connector">
+            <div class="rate"><strong id="rateView1">15%</strong><span>conversion</span></div>
+            <div class="arrow"></div>
+          </div>
+          <div class="stage">
+            <div class="num">2</div>
+            <div class="name">Result Positive</div>
+            <div class="caption">Abnormal finding</div>
+            <div class="value-wrap">
+              <div class="value" id="stage2">–</div>
+              <div class="unit">cases</div>
+            </div>
+          </div>
+          <div class="connector">
+            <div class="rate"><strong id="rateView2">80%</strong><span>conversion</span></div>
+            <div class="arrow"></div>
+          </div>
+          <div class="stage">
+            <div class="num">3</div>
+            <div class="name">Consultant Surgeon</div>
+            <div class="caption">Surgical consult</div>
+            <div class="value-wrap">
+              <div class="value" id="stage3">–</div>
+              <div class="unit">cases</div>
+            </div>
+          </div>
+          <div class="connector">
+            <div class="rate"><strong id="rateView3">80%</strong><span>conversion</span></div>
+            <div class="arrow"></div>
+          </div>
+          <div class="stage">
+            <div class="num">4</div>
+            <div class="name">นัดผ่าตัด<br>ใน 30 วัน</div>
+            <div class="caption">Surgery scheduled</div>
+            <div class="value-wrap">
+              <div class="value" id="stage4">–</div>
+              <div class="unit">cases</div>
+            </div>
+          </div>
+          <div class="connector">
+            <div class="rate"><strong id="rateView4">90%</strong><span>conversion</span></div>
+            <div class="arrow"></div>
+          </div>
+          <div class="stage">
+            <div class="num">5</div>
+            <div class="name">มาผ่าตัด<br>ภายใน 30 วัน</div>
+            <div class="caption">Attended surgery</div>
+            <div class="value-wrap">
+              <div class="value" id="stage5">–</div>
+              <div class="unit">cases</div>
+            </div>
+          </div>
+          <div class="connector">
+            <div class="rate"><strong id="rateView5">100%</strong><span>conversion</span></div>
+            <div class="arrow"></div>
+          </div>
+          <div class="stage target">
+            <div class="num">6</div>
+            <div class="name">Laparoscopic<br>Cholecystectomy</div>
+            <div class="caption">Target output</div>
+            <div class="value-wrap">
+              <div class="value" id="stage6">–</div>
+              <div class="unit">cases</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="label">Risk-factor pool required</div>
+          <div class="big" id="summaryPool">–</div>
+          <div class="small">Upstream cases needed to deliver the current target output</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Result-positive volume</div>
+          <div class="big" id="summaryPositive">–</div>
+          <div class="small">Patients likely to screen positive before surgical workup</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Consultant surgeon volume</div>
+          <div class="big" id="summaryConsult">–</div>
+          <div class="small">Consult demand generated from the positive pathway</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">นัดผ่าตัดใน 30 วัน</div>
+          <div class="big" id="summaryScheduled">–</div>
+          <div class="small">Booked surgical cases needed before conversion to LC output</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">มาผ่าตัดภายใน 30 วัน</div>
+          <div class="big" id="summaryAttended">–</div>
+          <div class="small">Patients who attended surgery before final LC procedure</div>
+        </div>
+      </div>
+
+      <div class="footer-note" id="footerNote"></div>
+    </section>
+  </div>
+
+  <script>
+    const workbookRates = [15, 80, 80, 90, 100];
+    let mode = 'backward';
+
+    const el = (id) => document.getElementById(id);
+    const fmt = new Intl.NumberFormat('en-US');
+    const pctFmt = (v) => `${Number(v).toFixed(v % 1 === 0 ? 0 : 1)}%`;
+
+    function safeRate(value){
+      const n = Number(value);
+      if (!Number.isFinite(n)) return 0;
+      if (n < 0) return 0;
+      return n / 100;
+    }
+
+    function readInputs(){
+      return {
+        target: Math.max(0, Number(el('targetInput').value || 0)),
+        rates: [
+          safeRate(el('rate1').value),
+          safeRate(el('rate2').value),
+          safeRate(el('rate3').value),
+          safeRate(el('rate4').value),
+          safeRate(el('rate5').value)
+        ]
+      };
+    }
+
+    function roundDisplay(value){
+      return fmt.format(Math.round(value));
+    }
+
+    function calculate(){
+      const { target, rates } = readInputs();
+      const [r1, r2, r3, r4, r5] = rates;
+      const overall = r1 * r2 * r3 * r4 * r5;
+
+      let s6 = target;
+      let s5 = r5 > 0 ? s6 / r5 : 0;
+      let s4 = r4 > 0 ? s5 / r4 : 0;
+      let s3 = r3 > 0 ? s4 / r3 : 0;
+      let s2 = r2 > 0 ? s3 / r2 : 0;
+      let s1 = r1 > 0 ? s2 / r1 : 0;
+
+      if (!Number.isFinite(s1)) s1 = 0;
+      if (!Number.isFinite(s2)) s2 = 0;
+      if (!Number.isFinite(s3)) s3 = 0;
+      if (!Number.isFinite(s4)) s4 = 0;
+      if (!Number.isFinite(s5)) s5 = 0;
+      if (!Number.isFinite(s6)) s6 = 0;
+
+      el('stage1').textContent = roundDisplay(s1);
+      el('stage2').textContent = roundDisplay(s2);
+      el('stage3').textContent = roundDisplay(s3);
+      el('stage4').textContent = roundDisplay(s4);
+      el('stage5').textContent = roundDisplay(s5);
+      el('stage6').textContent = roundDisplay(s6);
+
+      el('summaryPool').textContent = roundDisplay(s1);
+      el('summaryPositive').textContent = roundDisplay(s2);
+      el('summaryConsult').textContent = roundDisplay(s3);
+      el('summaryScheduled').textContent = roundDisplay(s4);
+      el('summaryAttended').textContent = roundDisplay(s5);
+
+      el('rateView1').textContent = pctFmt(Number(el('rate1').value || 0));
+      el('rateView2').textContent = pctFmt(Number(el('rate2').value || 0));
+      el('rateView3').textContent = pctFmt(Number(el('rate3').value || 0));
+      el('rateView4').textContent = pctFmt(Number(el('rate4').value || 0));
+      el('rateView5').textContent = pctFmt(Number(el('rate5').value || 0));
+
+      el('heroTarget').textContent = roundDisplay(s6);
+      el('heroOverall').textContent = `${(overall * 100).toFixed(overall * 100 < 1 ? 2 : 1)}%`;
+      el('modeMeta').textContent = 'Backward mode · target-reconciled';
+      el('flowShell').classList.toggle('backward', mode === 'backward');
+
+      const anyZero = [r1, r2, r3, r4, r5].some(v => v <= 0);
+      if (anyZero) {
+        el('footerNote').innerHTML = '<span class="warning">โปรดตรวจสอบ Conversion Rates</span> · หากมีค่าใดเป็น 0 ระบบจะไม่สามารถคำนวณย้อน upstream requirement ได้ครบทุก stage';
+      } else {
+        el('footerNote').textContent = `Target LC ${roundDisplay(s6)} cases ต้องใช้ upstream risk-factor volume ประมาณ ${roundDisplay(s1)} cases ภายใต้ conversion rates ปัจจุบัน (${pctFmt(Number(el('rate1').value || 0))} → ${pctFmt(Number(el('rate2').value || 0))} → ${pctFmt(Number(el('rate3').value || 0))} → ${pctFmt(Number(el('rate4').value || 0))} → ${pctFmt(Number(el('rate5').value || 0))}).`;
+      }
+    }
+
+    function restoreWorkbookRates(){
+      el('rate1').value = workbookRates[0];
+      el('rate2').value = workbookRates[1];
+      el('rate3').value = workbookRates[2];
+      el('rate4').value = workbookRates[3];
+      el('rate5').value = workbookRates[4];
+      calculate();
+    }
+
+    el('calcBtn').addEventListener('click', calculate);
+    el('restoreBtn').addEventListener('click', restoreWorkbookRates);
+
+    ['targetInput','rate1','rate2','rate3','rate4','rate5'].forEach(id => {
+      el(id).addEventListener('input', () => {
+        if (id === 'targetInput') {
+          const cleaned = Math.max(0, Number(el(id).value || 0));
+          if (!Number.isNaN(cleaned)) el(id).value = String(cleaned);
+        }
+        calculate();
+      });
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
